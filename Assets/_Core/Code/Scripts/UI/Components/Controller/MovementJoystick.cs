@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace Core.Player
+namespace Core.UI.Components.Controller
 {
-    public class Joystick : MonoBehaviour, IDragHandler, IPointerUpHandler, IPointerDownHandler
+    public sealed class MovementJoystick : MonoBehaviour, IDragHandler, IPointerUpHandler, IPointerDownHandler
     {
         [SerializeField] private RectTransform _joystickBackground;
         [SerializeField] private RectTransform _joystickHandle;
@@ -19,7 +19,7 @@ namespace Core.Player
             _maxLength = _joystickBackground.sizeDelta.x / 3f;
         }
 
-        public virtual void OnDrag(PointerEventData data)
+        public void OnDrag(PointerEventData data)
         {
             if (RectTransformUtility.ScreenPointToLocalPointInRectangle(_joystickBackground, data.position, data.pressEventCamera, out var position))
             {
@@ -30,13 +30,13 @@ namespace Core.Player
             }
         }
 
-        public virtual void OnPointerDown(PointerEventData data)
+        public void OnPointerDown(PointerEventData data)
         {
             IsTouched = true;
             OnDrag(data);
         }
 
-        public virtual void OnPointerUp(PointerEventData data)
+        public void OnPointerUp(PointerEventData data)
         {
             IsTouched = false;
             _inputDirection = Vector2.zero;
