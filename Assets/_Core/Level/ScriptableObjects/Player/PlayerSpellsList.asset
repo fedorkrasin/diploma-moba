@@ -9,10 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a2bb18c696c04c6495d6a57a7d7a98ad, type: 3}
-  m_Name: PlayerStats
+  m_Script: {fileID: 11500000, guid: b20d1d4e39c7497fa8e2d4d91007f33d, type: 3}
+  m_Name: PlayerSpellsList
   m_EditorClassIdentifier: 
-  _health: 100
-  _healthRegeneration: 10
-  _mana: 80
-  _manaRegeneration: 8
+  _simple: {fileID: 11400000, guid: 43f7e5fb765c9414484222b36f511340, type: 2}
+  _ultimate: {fileID: 11400000, guid: bd280263058deea40b50722fc68fe568, type: 2}

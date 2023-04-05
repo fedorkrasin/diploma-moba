@@ -1,11 +1,14 @@
 ﻿using System;
+using Core.UI.Components.Features;
 using UnityEngine;
 
 namespace Core.Player.Systems
 {
-    public class HealthSystem : IRegenerating
+    public class HealthSystem : MonoBehaviour, IRegenerating
     {
-        private const float HealthRegenerationDelay = 0.1f; // temp
+        [SerializeField] private FeatureBar _healthbar;
+        
+        private const float RegenerationDelay = 0.5f; // temp
         
         private int _maxHealth;
         private float _regeneration;
@@ -16,20 +19,22 @@ namespace Core.Player.Systems
 
         public event Action Died = delegate { };
 
-        public HealthSystem(float health, float regeneration)
+        public void Initialize(float health, float regeneration)
         {
             _maxHealth = (int)health;
             _currentHealth = (int)health;
             _regeneration = regeneration;
         }
 
-        public void Update()
+        private void Update()
         {
             Regenerate();
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                Damage(10);
-            }
+            _healthbar.UpdateValue(_currentExactHealth, _maxHealth);
+        }
+
+        private void OnMouseDown()
+        {
+            Damage(20);
         }
 
         public void Damage(float damageAmount)
@@ -57,9 +62,9 @@ namespace Core.Player.Systems
             if (_currentHealth != (int) _currentExactHealth) _currentExactHealth = _currentHealth;
             if (_currentHealth == _maxHealth) return;
             
-            if (_regenerationTimer >= HealthRegenerationDelay)
+            if (_regenerationTimer >= RegenerationDelay)
             {
-                var regeneration = _regeneration * HealthRegenerationDelay;
+                var regeneration = _regeneration * RegenerationDelay;
                 
                 if (_currentExactHealth + regeneration < _maxHealth)
                 {

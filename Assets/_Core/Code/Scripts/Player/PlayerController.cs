@@ -1,3 +1,5 @@
+using Core.Characters;
+using Core.Player.Stats;
 using Core.Player.Systems;
 using UnityEngine;
 
@@ -5,18 +7,28 @@ namespace Core.Player
 {
     public class PlayerController : MonoBehaviour
     {
-        [SerializeField] private ControllerSystem _controller;
         [SerializeField] private Rigidbody _rigidbody;
+        [SerializeField] private ControllerSystem _controller;
+        [SerializeField] private PlayerBehaviour _player;
+        [SerializeField] private PlayerSpellsList _spellsList;
+        
         [SerializeField] private float _moveSpeed;
         [SerializeField] private float _rotationSpeed;
 
+        [SerializeField] private Character _characterType;
+        private ICharacter _character;
+        
+        private SpellSystem _spells;
         private Transform _transform;
         private Vector3 _direction;
 
         private void OnEnable()
         {
+            _spells = new SpellSystem(_spellsList);
             _transform = transform;
             _direction = _transform.forward;
+
+            _character = CharacterConstructor.Get(_characterType);
 
             _controller.AttackButtonClicked += Attack;
             _controller.SpellButtonClicked += UseSpell;
@@ -30,7 +42,7 @@ namespace Core.Player
             _controller.AttackButtonClicked -= Attack;
         }
 
-        private void Update()
+        private void FixedUpdate()
         {
             if (_controller.IsMoving)
             {
@@ -63,12 +75,28 @@ namespace Core.Player
 
         private void UseSpell()
         {
-            Debug.Log("Spell");
+            if (_player.Mana.Spend(_spellsList.Simple.ManaCost))
+            {
+                _character.UseSpell();
+                _controller.SpellButton.SetCooldown(_spellsList.Simple.Cooldown);
+            }
+            else
+            {
+                Debug.Log("Not enough mana!");
+            }
         }
 
         private void UseUltimate()
         {
-            Debug.Log("Ultimate");
+            if (_player.Mana.Spend(_spellsList.Ultimate.ManaCost))
+            {
+                _character.UseUltimate();
+                _controller.UltimateButton.SetCooldown(_spellsList.Ultimate.Cooldown);
+            }
+            else
+            {
+                Debug.Log("Not enough mana!");
+            }
         }
     }
 }

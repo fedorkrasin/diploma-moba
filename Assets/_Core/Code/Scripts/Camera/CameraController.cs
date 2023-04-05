@@ -15,14 +15,14 @@ namespace Core.Camera
             _transform = transform;
         }
 
-        private void LateUpdate()
+        private void FixedUpdate()
         {
             FollowPlayer();
         }
 
         private void FollowPlayer()
         {
-            _transform.position = Vector3.Lerp(_transform.position, _player.position + _offset, _followSpeed * Time.deltaTime);
+            _transform.position = Vector3.Lerp(_transform.position, _player.position + _offset, _followSpeed);
         }
     }
 }

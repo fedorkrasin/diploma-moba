@@ -7,19 +7,15 @@ namespace Core.Player
     public class PlayerBehaviour : MonoBehaviour
     {
         [field: SerializeField] public PlayerController Controller;
-
-        [SerializeField] private PlayerStats _stats;
+        [field: SerializeField] public HealthSystem Health;
+        [field: SerializeField] public ManaSystem Mana;
         
-        private HealthSystem _healthSystem;
+        [SerializeField] private PlayerStats _stats;
 
         private void Awake()
         {
-            _healthSystem = new HealthSystem(_stats.Health, _stats.HealthRegeneration);
-        }
-
-        private void Update()
-        {
-            _healthSystem.Update();
+            Health.Initialize(_stats.Health, _stats.HealthRegeneration);
+            Mana.Initialize(_stats.Mana, _stats.ManaRegeneration);
         }
     }
 }

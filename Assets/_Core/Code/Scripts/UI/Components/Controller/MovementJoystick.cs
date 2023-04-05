@@ -23,7 +23,6 @@ namespace Core.UI.Components.Controller
         {
             if (RectTransformUtility.ScreenPointToLocalPointInRectangle(_joystickBackground, data.position, data.pressEventCamera, out var position))
             {
-                Debug.Log(Value);
                 _inputDirection = new Vector2(position.x, position.y);
                 _inputDirection = _inputDirection.magnitude > _maxLength ? _inputDirection.normalized * _maxLength : _inputDirection;
                 _joystickHandle.anchoredPosition = new Vector2(_inputDirection.x, _inputDirection.y);
