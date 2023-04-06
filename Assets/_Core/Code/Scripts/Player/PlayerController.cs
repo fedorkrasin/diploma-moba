@@ -1,5 +1,4 @@
 using Core.Characters;
-using Core.Player.Stats;
 using Core.Player.Systems;
 using UnityEngine;
 
@@ -10,25 +9,19 @@ namespace Core.Player
         [SerializeField] private Rigidbody _rigidbody;
         [SerializeField] private ControllerSystem _controller;
         [SerializeField] private PlayerBehaviour _player;
-        [SerializeField] private PlayerSpellsList _spellsList;
         
         [SerializeField] private float _moveSpeed;
         [SerializeField] private float _rotationSpeed;
 
-        [SerializeField] private Character _characterType;
-        private ICharacter _character;
+        [SerializeField] private Character _character;
         
-        private SpellSystem _spells;
         private Transform _transform;
         private Vector3 _direction;
 
         private void OnEnable()
         {
-            _spells = new SpellSystem(_spellsList);
             _transform = transform;
             _direction = _transform.forward;
-
-            _character = CharacterConstructor.Get(_characterType);
 
             _controller.AttackButtonClicked += Attack;
             _controller.SpellButtonClicked += UseSpell;
@@ -70,15 +63,15 @@ namespace Core.Player
 
         private void Attack()
         {
-            Debug.Log("Attack");
+            _character.Attack();
         }
 
         private void UseSpell()
         {
-            if (_player.Mana.Spend(_spellsList.Simple.ManaCost))
+            if (_player.Mana.Spend(_character.Spells.Simple.ManaCost))
             {
                 _character.UseSpell();
-                _controller.SpellButton.SetCooldown(_spellsList.Simple.Cooldown);
+                _controller.SpellButton.SetCooldown(_character.Spells.Simple.Cooldown);
             }
             else
             {
@@ -88,10 +81,10 @@ namespace Core.Player
 
         private void UseUltimate()
         {
-            if (_player.Mana.Spend(_spellsList.Ultimate.ManaCost))
+            if (_player.Mana.Spend(_character.Spells.Ultimate.ManaCost))
             {
                 _character.UseUltimate();
-                _controller.UltimateButton.SetCooldown(_spellsList.Ultimate.Cooldown);
+                _controller.UltimateButton.SetCooldown(_character.Spells.Ultimate.Cooldown);
             }
             else
             {

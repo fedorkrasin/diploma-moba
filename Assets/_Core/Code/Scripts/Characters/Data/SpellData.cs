@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 
-namespace Core.Player.Data
+namespace Core.Characters.Data
 {
-    [CreateAssetMenu(fileName = "SpellData", menuName = "Player/Spells/SpellData")]
+    [CreateAssetMenu(fileName = "SpellData", menuName = "Character/Spells/SpellData")]
     public class SpellData : ScriptableObject
     {
         [SerializeField] private string _name;

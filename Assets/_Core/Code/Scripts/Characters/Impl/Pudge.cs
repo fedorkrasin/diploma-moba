@@ -2,21 +2,21 @@
 
 namespace Core.Characters.Impl
 {
-    public class Pudge : ICharacter
+    public class Pudge : Character
     {
-        public void Attack()
+        public override void Attack()
         {
-            throw new System.NotImplementedException();
+            Debug.Log("тычка пуджа");
         }
 
-        public void UseSpell()
+        public override void UseSpell()
         {
-            Debug.Log("PUDGE!");
+            Debug.Log("Meat hook)");
         }
 
-        public void UseUltimate()
+        public override void UseUltimate()
         {
-            throw new System.NotImplementedException();
+            Debug.Log("FResh meat!!");
         }
     }
 }

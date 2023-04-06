@@ -2,21 +2,21 @@
 
 namespace Core.Characters.Impl
 {
-    public class Timbersaw : ICharacter
+    public class Timbersaw : Character
     {
-        public void Attack()
+        public override void Attack()
         {
-            throw new System.NotImplementedException();
+            Debug.Log("тычка тимбера");
         }
 
-        public void UseSpell()
+        public override void UseSpell()
         {
-            Debug.Log(this);
+            Debug.Log("Chainsaw");
         }
 
-        public void UseUltimate()
+        public override void UseUltimate()
         {
-            throw new System.NotImplementedException();
+            Debug.Log("Chakram");
         }
     }
 }

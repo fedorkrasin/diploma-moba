@@ -1,8 +1,16 @@
-﻿namespace Core.Characters
+﻿using Core.Characters.Data;
+using UnityEngine;
+
+namespace Core.Characters
 {
-    public enum Character
+    public abstract class Character : MonoBehaviour
     {
-        Pudge,
-        Timbersaw,
+        [SerializeField] private CharacterSpells _spells;
+
+        public CharacterSpells Spells => _spells;
+        
+        public abstract void Attack();
+        public abstract void UseSpell();
+        public abstract void UseUltimate();
     }
 }
