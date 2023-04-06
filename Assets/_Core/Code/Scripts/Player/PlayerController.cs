@@ -41,6 +41,11 @@ namespace Core.Player
             {
                 Move();
                 Rotate();
+                _player.Animator.ToggleAnimation(PlayerAnimator.PlayerAnimationBool.IsRunning, true);
+            }
+            else
+            {
+                _player.Animator.ToggleAnimation(PlayerAnimator.PlayerAnimationBool.IsRunning, false);
             }
         }
 
@@ -64,6 +69,7 @@ namespace Core.Player
         private void Attack()
         {
             _character.Attack();
+            _player.Animator.TriggerAnimation(PlayerAnimator.PlayerAnimationTrigger.Attack);
         }
 
         private void UseSpell()

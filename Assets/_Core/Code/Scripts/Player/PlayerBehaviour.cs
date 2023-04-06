@@ -7,6 +7,7 @@ namespace Core.Player
     public class PlayerBehaviour : MonoBehaviour
     {
         [field: SerializeField] public PlayerController Controller;
+        [field: SerializeField] public PlayerAnimator Animator;
         [field: SerializeField] public HealthSystem Health;
         [field: SerializeField] public ManaSystem Mana;
         
