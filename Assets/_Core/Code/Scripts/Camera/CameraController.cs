@@ -9,10 +9,12 @@ namespace Core.Camera
         [SerializeField] private float _followSpeed;
 
         private Transform _transform;
+        private Vector3 _rotation;
         
         private void Start()
         {
             _transform = transform;
+            _transform.parent = null;
         }
 
         private void FixedUpdate()
