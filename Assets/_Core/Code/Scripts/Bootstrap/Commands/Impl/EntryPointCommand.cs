@@ -1,10 +1,21 @@
-﻿using UnityEngine;
+﻿using System;
+using Core.UI.ViewManagement;
+using Core.UI.ViewManagement.Data;
+using UnityEngine;
 using Zenject;
 
 namespace Core.Bootstrap.Commands.Impl
 {
     public class EntryPointCommand : IEntryPointCommand, IInitializable
     {
+        private readonly ViewManager _viewManager;
+
+        public EntryPointCommand(
+            ViewManager viewManager)
+        {
+            _viewManager = viewManager ?? throw new ArgumentNullException(nameof(viewManager));
+        }
+        
         public void Initialize()
         {
             Execute();
@@ -14,7 +25,7 @@ namespace Core.Bootstrap.Commands.Impl
         {
             Application.targetFrameRate = 120;
             
-            Debug.Log(this);
+            _viewManager.OpenView(ViewId.CharacterSelection);
         }
     }
 }

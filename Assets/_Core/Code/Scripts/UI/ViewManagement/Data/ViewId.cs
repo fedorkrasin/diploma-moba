@@ -2,6 +2,7 @@
 {
     public enum ViewId
     {
-        
+        CharacterSelection,
+        PlayerController,
     }
 }
