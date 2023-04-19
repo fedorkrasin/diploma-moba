@@ -1,4 +1,5 @@
-﻿using Core.Player;
+﻿using Core.Characters.Data;
+using Core.Player;
 using Core.UI.ViewManagement;
 using Core.UI.ViewManagement.Data;
 using UnityEngine;
@@ -10,8 +11,8 @@ namespace Core.Installers.Bootstrap
     {
         [SerializeField] private ViewLayers _viewLayers;
         [SerializeField] private ViewMappings _viewMappings;
-        
-        [SerializeField] private PlayerBehaviour _playerPrefab;
+
+        [SerializeField] private CharactersList _charactersList;
         
         public override void InstallBindings()
         {
@@ -22,8 +23,9 @@ namespace Core.Installers.Bootstrap
             Container.BindInstance(_viewMappings).AsSingle();
             Container.BindInterfacesAndSelfTo<ViewManager>().AsSingle();
             
-            Container.BindFactory<PlayerBehaviour, PlaceholderFactory<PlayerBehaviour>>().FromComponentInNewPrefab(_playerPrefab);
             Container.Bind<PlayerSpawner>().AsSingle();
+            
+            Container.BindInterfacesAndSelfTo<CharactersList>().FromInstance(_charactersList).AsSingle();
         }
     }
 }

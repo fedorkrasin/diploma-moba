@@ -85,6 +85,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5068307787469664375}
+  - component: {fileID: 5110684651727544257}
   m_Layer: 5
   m_Name: PlayerController
   m_TagString: Untagged
@@ -116,6 +117,22 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &5110684651727544257
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1398585443329386795}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88cc64d625634671bc0c877465aee491, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _movementJoystick: {fileID: 1140662381929854818}
+  _attackButton: {fileID: 2241739896352622223}
+  _spellButton: {fileID: 255656701746786069}
+  _ultimateButton: {fileID: 7477173183291220884}
 --- !u!1 &2964681358786518139
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,23 +1,26 @@
 ﻿using System;
-using Zenject;
+using Core.Characters;
+using Core.Characters.Data;
 using Object = UnityEngine.Object;
 
 namespace Core.Player
 {
     public class PlayerSpawner
     {
-        private readonly PlaceholderFactory<PlayerBehaviour> _playerFactory;
+        private readonly CharactersList _charactersList;
         
         public PlayerBehaviour Player { get; private set; }
 
-        public PlayerSpawner(PlaceholderFactory<PlayerBehaviour> playerFactory)
+        public PlayerSpawner(CharactersList charactersList)
         {
-            _playerFactory = playerFactory ?? throw new ArgumentNullException(nameof(playerFactory));
+            _charactersList = charactersList ? charactersList : throw new ArgumentNullException(nameof(charactersList));
         }
 
-        public PlayerBehaviour Spawn()
+        public PlayerBehaviour Spawn(CharacterType type)
         {
-            Player = _playerFactory.Create();
+            var data = _charactersList.Get(type);
+            var character = Object.Instantiate(data.CharacterPrefab);
+            Player = character.GetComponent<PlayerBehaviour>();
             return Player;
         }
 

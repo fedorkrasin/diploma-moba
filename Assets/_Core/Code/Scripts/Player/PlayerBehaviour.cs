@@ -1,4 +1,5 @@
-﻿using Core.Player.Stats;
+﻿using Core.Characters;
+using Core.Player.Stats;
 using Core.Player.Systems;
 using UnityEngine;
 
@@ -6,6 +7,7 @@ namespace Core.Player
 {
     public class PlayerBehaviour : MonoBehaviour
     {
+        [field: SerializeField] public Character Character;
         [field: SerializeField] public PlayerController Controller;
         [field: SerializeField] public PlayerAnimator Animator;
         [field: SerializeField] public HealthSystem Health;

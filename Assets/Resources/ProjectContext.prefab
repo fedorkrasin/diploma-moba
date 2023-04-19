@@ -131,6 +131,7 @@ MonoBehaviour:
   _viewLayers: {fileID: 9128984994572899490}
   _viewMappings: {fileID: 11400000, guid: 5a2f897b26f2fd64aaa70e2ba7642901, type: 2}
   _playerPrefab: {fileID: 7629647001433504288, guid: e81ad95f35099b042a4e89ab1a1c7a0e, type: 3}
+  _charactersList: {fileID: 11400000, guid: 2d71008ddfc74ff43823949f28fe5ba1, type: 2}
 --- !u!1 &4365868718918577680
 GameObject:
   m_ObjectHideFlags: 0
