@@ -2,21 +2,21 @@
 
 namespace Core.Characters.Impl
 {
-    public class Pudge : Character
+    public class Cactoro : Character
     {
         public override void Attack()
         {
-            Debug.Log("тычка пуджа");
+            Debug.Log("тычка тимбера");
         }
 
         public override void UseSpell()
         {
-            Debug.Log("Meat hook)");
+            Debug.Log("Chainsaw");
         }
 
         public override void UseUltimate()
         {
-            Debug.Log("FResh meat!!");
+            Debug.Log("Chakram");
         }
     }
 }

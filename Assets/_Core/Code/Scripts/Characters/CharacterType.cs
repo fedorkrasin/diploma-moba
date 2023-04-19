@@ -2,7 +2,7 @@
 {
     public enum CharacterType
     {
-        Pudge,
-        Timbersaw,
+        Cactoro,
+        Fish,
     }
 }

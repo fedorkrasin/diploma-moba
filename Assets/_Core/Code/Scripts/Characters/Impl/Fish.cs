@@ -2,21 +2,21 @@
 
 namespace Core.Characters.Impl
 {
-    public class Timbersaw : Character
+    public class Fish : Character
     {
         public override void Attack()
         {
-            Debug.Log("тычка тимбера");
+            Debug.Log("тычка пуджа");
         }
 
         public override void UseSpell()
         {
-            Debug.Log("Chainsaw");
+            Debug.Log("Meat hook)");
         }
 
         public override void UseUltimate()
         {
-            Debug.Log("Chakram");
+            Debug.Log("FResh meat!!");
         }
     }
 }

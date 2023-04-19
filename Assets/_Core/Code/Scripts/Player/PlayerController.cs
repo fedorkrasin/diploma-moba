@@ -1,5 +1,4 @@
-using Core.Characters;
-using Core.Player.Systems;
+using Core.UI.Views.Impl;
 using UnityEngine;
 
 namespace Core.Player
@@ -7,37 +6,27 @@ namespace Core.Player
     public class PlayerController : MonoBehaviour
     {
         [SerializeField] private Rigidbody _rigidbody;
-        [SerializeField] private ControllerSystem _controller;
         [SerializeField] private PlayerBehaviour _player;
         
         [SerializeField] private float _moveSpeed;
         [SerializeField] private float _rotationSpeed;
-
-        [SerializeField] private Character _character;
         
         private Transform _transform;
         private Vector3 _direction;
 
-        private void OnEnable()
+        public PlayerControllerView Controller { get; set; }
+
+        private void Awake()
         {
             _transform = transform;
             _direction = _transform.forward;
-
-            _controller.AttackButtonClicked += Attack;
-            _controller.SpellButtonClicked += UseSpell;
-            _controller.UltimateButtonClicked += UseUltimate;
-        }
-
-        private void OnDisable()
-        {
-            _controller.UltimateButtonClicked -= UseUltimate;
-            _controller.SpellButtonClicked -= UseSpell;
-            _controller.AttackButtonClicked -= Attack;
         }
 
         private void FixedUpdate()
         {
-            if (_controller.IsMoving)
+            if (!Controller) return;
+            
+            if (Controller.IsMoving)
             {
                 Move();
                 Rotate();
@@ -51,7 +40,7 @@ namespace Core.Player
 
         private void Move()
         {
-            var moveDirection = new Vector3(_controller.MovementValue.x, 0f, _controller.MovementValue.y);
+            var moveDirection = new Vector3(Controller.MovementValue.x, 0f, Controller.MovementValue.y);
             
             if (moveDirection.magnitude > 0f)
             {
@@ -66,36 +55,34 @@ namespace Core.Player
             _transform.rotation = Quaternion.Lerp(_transform.rotation, Quaternion.LookRotation(_direction), _rotationSpeed * Time.deltaTime);
         }
 
-        private void Attack()
+        public void Attack()
         {
-            _character.Attack();
+            _player.Character.Attack();
             _player.Animator.TriggerAnimation(PlayerAnimator.PlayerAnimationTrigger.Attack);
         }
 
-        private void UseSpell()
+        public bool UseSpell()
         {
-            if (_player.Mana.Spend(_character.Spells.Simple.ManaCost))
+            if (_player.Mana.Spend(_player.Character.Spells.Simple.ManaCost))
             {
-                _character.UseSpell();
-                _controller.SpellButton.SetCooldown(_character.Spells.Simple.Cooldown);
+                _player.Character.UseSpell();
+                return true;
             }
-            else
-            {
-                Debug.Log("Not enough mana!");
-            }
+
+            Debug.Log("Not enough mana!");
+            return false;
         }
 
-        private void UseUltimate()
+        public bool UseUltimate()
         {
-            if (_player.Mana.Spend(_character.Spells.Ultimate.ManaCost))
+            if (_player.Mana.Spend(_player.Character.Spells.Ultimate.ManaCost))
             {
-                _character.UseUltimate();
-                _controller.UltimateButton.SetCooldown(_character.Spells.Ultimate.Cooldown);
+                _player.Character.UseUltimate();
+                return true;
             }
-            else
-            {
-                Debug.Log("Not enough mana!");
-            }
+
+            Debug.Log("Not enough mana!");
+            return false;
         }
     }
 }

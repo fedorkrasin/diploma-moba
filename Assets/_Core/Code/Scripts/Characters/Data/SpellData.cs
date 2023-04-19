@@ -2,7 +2,7 @@
 
 namespace Core.Characters.Data
 {
-    [CreateAssetMenu(fileName = "SpellData", menuName = "Character/Spells/SpellData")]
+    [CreateAssetMenu(fileName = "SpellData", menuName = "Characters/SpellData")]
     public class SpellData : ScriptableObject
     {
         [SerializeField] private string _name;

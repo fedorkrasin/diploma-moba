@@ -10,6 +10,7 @@ namespace Core.Installers.Bootstrap
         public override void InstallBindings()
         {
             Container.BindInterfaceToCommand<IEntryPointCommand, IInitializable, EntryPointCommand>();
+            Container.BindCommand<ISelectCharacterCommand, SelectCharacterCommand>();
             Container.BindCommand<IStartMatchCommand, StartMatchCommand>();
         }
     }
