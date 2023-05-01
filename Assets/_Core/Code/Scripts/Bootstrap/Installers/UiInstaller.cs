@@ -11,6 +11,7 @@ namespace Core.Installers.Bootstrap
         {
             Container.BindActors<CharacterSelectionView, CharacterSelectionPresenter>();
             Container.BindActors<PlayerControllerView, PlayerControllerPresenter>();
+            Container.BindActors<NetworkControllerView, NetworkControllerPresenter>();
         }
     }
 }
