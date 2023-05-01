@@ -1,4 +1,5 @@
 ﻿using Core.Bootstrap.Commands;
+using Core.UI.ViewManagement.Actors;
 using UnityEngine;
 using Zenject;
 
@@ -35,11 +36,11 @@ namespace Core.Util.Extensions
             return container.Bind<TContract>().FromInstance(instance);
         }
         
-        // public static void BindActors<TView, TPresenter>(this DiContainer container)
-        //     where TView : IView
-        // {
-        //     container.Bind<object>().WithId(typeof(TView).Name).To<TPresenter>().AsTransient();
-        // }
+        public static void BindActors<TView, TPresenter>(this DiContainer container)
+            where TView : IView
+        {
+            container.Bind<object>().WithId(typeof(TView).Name).To<TPresenter>().AsTransient();
+        }
 
         public static void BindCommand<TContract, TConcrete>(this DiContainer container)
             where TContract : ICommand

@@ -1,11 +1,12 @@
 ﻿using System;
 using Core.UI.Components.Controller;
+using Core.UI.ViewManagement.Actors;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Core.Player.Systems
+namespace Core.UI.Views.Impl
 {
-    public class ControllerSystem : MonoBehaviour
+    public class PlayerControllerView : View, IPlayerControllerView
     {
         [SerializeField] private MovementJoystick _movementJoystick;
         [SerializeField] private Button _attackButton;

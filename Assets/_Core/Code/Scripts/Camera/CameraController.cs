@@ -4,9 +4,10 @@ namespace Core.Camera
 {
     public class CameraController : MonoBehaviour
     {
-        [SerializeField] private Transform _player;
         [SerializeField] private Vector3 _offset;
         [SerializeField] private float _followSpeed;
+        
+        public Transform PlayerTransform { get; set; }
 
         private Transform _transform;
         private Vector3 _rotation;
@@ -19,12 +20,15 @@ namespace Core.Camera
 
         private void FixedUpdate()
         {
-            FollowPlayer();
+            if (PlayerTransform)
+            {
+                FollowPlayer();
+            }
         }
 
         private void FollowPlayer()
         {
-            _transform.position = Vector3.Lerp(_transform.position, _player.position + _offset, _followSpeed);
+            _transform.position = Vector3.Lerp(_transform.position, PlayerTransform.position + _offset, _followSpeed);
         }
     }
 }
