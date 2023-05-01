@@ -1,4 +1,5 @@
 ﻿using System;
+using Core.Camera;
 using Core.Characters;
 using Core.Player;
 using Core.UI.ViewManagement;
@@ -10,13 +11,16 @@ namespace Core.Bootstrap.Commands.Impl
     {
         private readonly ViewManager _viewManager;
         private readonly PlayerSpawner _playerSpawner;
+        private readonly CameraController _cameraController;
 
         public SelectCharacterCommand(
             ViewManager viewManager,
-            PlayerSpawner playerSpawner)
+            PlayerSpawner playerSpawner,
+            CameraController cameraController)
         {
             _viewManager = viewManager ?? throw new ArgumentNullException(nameof(viewManager));
             _playerSpawner = playerSpawner ?? throw new ArgumentNullException(nameof(playerSpawner));
+            _cameraController = cameraController ? cameraController : throw new ArgumentNullException(nameof(cameraController));
         }
         
         public void Execute()
@@ -26,7 +30,8 @@ namespace Core.Bootstrap.Commands.Impl
 
         public void Execute(CharacterType characterType)
         {
-            _playerSpawner.Spawn(characterType);
+            var player = _playerSpawner.Spawn(characterType);
+            _cameraController.PlayerTransform = player.transform;
             _viewManager.OpenView(ViewId.PlayerController);
         }
     }

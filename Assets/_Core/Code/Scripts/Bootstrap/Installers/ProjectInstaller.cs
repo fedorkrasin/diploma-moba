@@ -1,4 +1,5 @@
-﻿using Core.Characters.Data;
+﻿using Core.Camera;
+using Core.Characters.Data;
 using Core.Player;
 using Core.UI.ViewManagement;
 using Core.UI.ViewManagement.Data;
@@ -13,6 +14,8 @@ namespace Core.Installers.Bootstrap
         [SerializeField] private ViewMappings _viewMappings;
 
         [SerializeField] private CharactersList _charactersList;
+
+        [SerializeField] private CameraController _cameraController;
         
         public override void InstallBindings()
         {
@@ -26,6 +29,8 @@ namespace Core.Installers.Bootstrap
             Container.Bind<PlayerSpawner>().AsSingle();
             
             Container.BindInterfacesAndSelfTo<CharactersList>().FromInstance(_charactersList).AsSingle();
+
+            Container.BindInstance(_cameraController).AsSingle();
         }
     }
 }
