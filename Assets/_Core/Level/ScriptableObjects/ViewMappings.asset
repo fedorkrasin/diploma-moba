@@ -22,3 +22,7 @@ MonoBehaviour:
       Value:
         Layer: 0
         Prefab: {fileID: 1398585443329386795, guid: ab1bfb98897015e4d9acca7160097150, type: 3}
+    - Key: 2
+      Value:
+        Layer: 0
+        Prefab: {fileID: 6441883991493846450, guid: 695672a5ee8d75f4e8dabf16754806ce, type: 3}

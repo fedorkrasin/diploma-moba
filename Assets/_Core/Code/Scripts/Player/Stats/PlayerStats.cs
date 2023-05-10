@@ -9,11 +9,17 @@ namespace Core.Player.Stats
         [SerializeField] private float _healthRegeneration;
         [SerializeField] private float _mana;
         [SerializeField] private float _manaRegeneration;
+        
+        [SerializeField] private float _moveSpeed;
+        [SerializeField] private float _rotationSpeed;
 
         public float Health => _health;
         public float HealthRegeneration => _healthRegeneration;
         
         public float Mana => _mana;
         public float ManaRegeneration => _manaRegeneration;
+
+        public float MoveSpeed => _moveSpeed;
+        public float RotationSpeed => _rotationSpeed;
     }
 }

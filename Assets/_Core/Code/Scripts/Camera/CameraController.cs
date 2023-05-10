@@ -10,10 +10,12 @@ namespace Core.Camera
         public Transform PlayerTransform { get; set; }
 
         private Transform _transform;
+        private Vector3 _rotation;
         
         private void Start()
         {
             _transform = transform;
+            _transform.parent = null;
         }
 
         private void FixedUpdate()

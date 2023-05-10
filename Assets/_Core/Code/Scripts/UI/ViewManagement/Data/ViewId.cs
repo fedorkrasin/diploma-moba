@@ -4,5 +4,6 @@
     {
         CharacterSelection,
         PlayerController,
+        NetworkController,
     }
 }
