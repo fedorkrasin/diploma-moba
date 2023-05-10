@@ -223,6 +223,7 @@ GameObject:
   - component: {fileID: 8241647122182179203}
   - component: {fileID: 8530896396673521898}
   - component: {fileID: 5793377041454346155}
+  - component: {fileID: 3118202948608868300}
   m_Layer: 0
   m_Name: Cactoro
   m_TagString: Untagged
@@ -302,7 +303,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2617977579436324778}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7388607b7dd749d28a5bb297589415f9, type: 3}
   m_Name: 
@@ -320,7 +321,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2617977579436324778}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 99655f14c70547d88a8eb113c7e3f57b, type: 3}
   m_Name: 
@@ -333,7 +334,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2617977579436324778}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7844bd749e8f40af8c7d4b409014e3bc, type: 3}
   m_Name: 
@@ -406,6 +407,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6c0be61502bb534f922ebb746851216, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &3118202948608868300
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2617977579436324778}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 65781f9cf43540bc89676b93d991cf24, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _speed: 3
 --- !u!1 &3558445493139850261
 GameObject:
   m_ObjectHideFlags: 0
