@@ -16,3 +16,5 @@ MonoBehaviour:
   _healthRegeneration: 10
   _mana: 80
   _manaRegeneration: 8
+  _moveSpeed: 10
+  _rotationSpeed: 30

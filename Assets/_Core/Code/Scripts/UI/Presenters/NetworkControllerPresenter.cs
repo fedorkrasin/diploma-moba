@@ -40,12 +40,15 @@ namespace Core.UI.Presenters
         private void OnHostClicked()
         {
             NetworkManager.Singleton.StartHost();
+            // _viewManager.OpenView(ViewId.CharacterSelection);
+            _viewManager.OpenView(ViewId.PlayerController);
         }
 
         private void OnClientClicked()
         {
             NetworkManager.Singleton.StartClient();
-            _viewManager.OpenView(ViewId.CharacterSelection);
+            // _viewManager.OpenView(ViewId.CharacterSelection);
+            _viewManager.OpenView(ViewId.PlayerController);
         }
     }
 }
