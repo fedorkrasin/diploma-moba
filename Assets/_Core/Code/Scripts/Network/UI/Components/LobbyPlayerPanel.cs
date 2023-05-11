@@ -1,7 +1,7 @@
 ﻿using TMPro;
 using UnityEngine;
 
-namespace Core.Network.Views
+namespace Core.Network.UI.Components
 {
     public class LobbyPlayerPanel : MonoBehaviour
     {

@@ -2,19 +2,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using Core.Network.Data;
+using Core.UI.ViewManagement.Actors;
 using TMPro;
 using UnityEngine;
 
-namespace Core.Network.Views
+namespace Core.Network.UI.Views
 {
-    public class CreateLobbyView : MonoBehaviour
+    public class CreateLobbyView : View
     {
         [SerializeField] private TMP_InputField _nameInput;
         [SerializeField] private TMP_InputField _maxPlayersInput;
         [SerializeField] private TMP_Dropdown _typeDropdown;
         [SerializeField] private TMP_Dropdown _difficultyDropdown;
         
-        public static event Action<LobbyData> LobbyCreated = delegate { };
+        public event Action<LobbyData> LobbyCreated = delegate { };
 
         private void Start()
         {

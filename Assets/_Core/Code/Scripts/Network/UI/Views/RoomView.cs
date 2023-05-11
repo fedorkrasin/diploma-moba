@@ -3,14 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using Core.Network.Managers;
 using Core.Network.Services;
+using Core.Network.UI.Components;
 using TMPro;
 using Unity.Netcode;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
+using View = Core.UI.ViewManagement.Actors.View;
 
-namespace Core.Network.Views
+namespace Core.Network.UI.Views
 {
-    public class RoomView : MonoBehaviour
+    public class RoomView : View
     {
         private readonly List<LobbyPlayerPanel> _playerPanels = new();
         
@@ -22,8 +24,8 @@ namespace Core.Network.Views
         private bool _allReady;
         private bool _ready;
 
-        public static event Action StartPressed = delegate { };
-        public static event Action LobbyLeft = delegate { };
+        public event Action StartPressed = delegate { };
+        public event Action LobbyLeft = delegate { };
 
         private void OnEnable()
         {

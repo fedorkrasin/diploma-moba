@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using Core.Network.Services;
+using Core.Network.UI.Components;
+using Core.UI.ViewManagement.Actors;
 using UnityEngine;
 
-namespace Core.Network.Views
+namespace Core.Network.UI.Views
 {
-    public class MainLobbyView : MonoBehaviour
+    public class MainLobbyView : View
     {
         [SerializeField] private LobbyRoomPanel _lobbyPanelPrefab;
         [SerializeField] private Transform _lobbyParent;

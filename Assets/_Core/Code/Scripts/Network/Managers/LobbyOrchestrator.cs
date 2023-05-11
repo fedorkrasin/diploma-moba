@@ -23,10 +23,9 @@ namespace Core.Network.Managers
             _createScreen.gameObject.SetActive(false);
             _roomScreen.gameObject.SetActive(false);
 
-            CreateLobbyView.LobbyCreated += CreateLobby;
+            
             LobbyRoomPanel.LobbySelected += OnLobbySelected;
-            RoomView.LobbyLeft += OnLobbyLeft;
-            RoomView.StartPressed += OnGameStart;
+            
 
             NetworkObject.DestroyWithScene = true;
         }
@@ -34,11 +33,9 @@ namespace Core.Network.Managers
         public void OnDisable()
         {
             base.OnDestroy();
-            
-            RoomView.StartPressed -= OnGameStart;
-            RoomView.LobbyLeft -= OnLobbyLeft;
+         
             LobbyRoomPanel.LobbySelected -= OnLobbySelected;
-            CreateLobbyView.LobbyCreated -= CreateLobby;
+            
 
             // We only care about this during lobby
             if (NetworkManager.Singleton != null)
@@ -72,32 +69,6 @@ namespace Core.Network.Managers
         }
 
 
-
-        #endregion
-
-        #region Create
-
-        private async void CreateLobby(LobbyData data)
-        {
-            using (new Load("Creating Lobby..."))
-            {
-                try
-                {
-                    await MatchmakingService.CreateLobbyWithAllocation(data);
-
-                    _createScreen.gameObject.SetActive(false);
-                    _roomScreen.gameObject.SetActive(true);
-
-                    // Starting the host immediately will keep the relay server alive
-                    NetworkManager.Singleton.StartHost();
-                }
-                catch (Exception e)
-                {
-                    Debug.LogError(e);
-                    CanvasUtilities.Instance.ShowError("Failed creating lobby");
-                }
-            }
-        }
 
         #endregion
 
@@ -197,24 +168,9 @@ namespace Core.Network.Managers
             LobbyPlayersUpdated?.Invoke(_playersInLobby);
         }
 
-        private async void OnLobbyLeft()
-        {
-            using (new Load("Leaving Lobby..."))
-            {
-                _playersInLobby.Clear();
-                NetworkManager.Singleton.Shutdown();
-                await MatchmakingService.LeaveLobby();
-            }
-        }
+        
 
-        private async void OnGameStart()
-        {
-            using (new Load("Starting the game..."))
-            {
-                await MatchmakingService.LockLobby();
-                NetworkManager.Singleton.SceneManager.LoadScene("Game", LoadSceneMode.Single);
-            }
-        }
+        
         #endregion
     }
 }

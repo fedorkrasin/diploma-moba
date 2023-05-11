@@ -4,7 +4,7 @@ using TMPro;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
 
-namespace Core.Network.Views
+namespace Core.Network.UI.Components
 {
     public class LobbyRoomPanel : MonoBehaviour
     {
