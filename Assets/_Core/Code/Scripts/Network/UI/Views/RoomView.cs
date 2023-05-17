@@ -8,6 +8,7 @@ using TMPro;
 using Unity.Netcode;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
+using UnityEngine.UI;
 using View = Core.UI.ViewManagement.Actors.View;
 
 namespace Core.Network.UI.Views
@@ -19,13 +20,16 @@ namespace Core.Network.UI.Views
         [SerializeField] private LobbyPlayerPanel _playerPanelPrefab;
         [SerializeField] private Transform _playerPanelParent;
         [SerializeField] private TMP_Text _waitingText;
-        [SerializeField] private GameObject _startButton, _readyButton;
+        [SerializeField] private Button _startButton;
+        [SerializeField] private Button _readyButton;
+        [SerializeField] private Button _exitButton;
 
         private bool _allReady;
         private bool _ready;
 
-        public event Action StartPressed = delegate { };
-        public event Action LobbyLeft = delegate { };
+        public static event Action StartPressed = delegate { };
+        public event Action ReadyClicked = delegate { };
+        public static event Action LobbyLeft = delegate { };
 
         private void OnEnable()
         {
@@ -34,14 +38,22 @@ namespace Core.Network.UI.Views
 
             LobbyOrchestrator.LobbyPlayersUpdated += NetworkLobbyPlayersUpdated;
             MatchmakingService.CurrentLobbyRefreshed += OnCurrentLobbyRefreshed;
-            _startButton.SetActive(false);
-            _readyButton.SetActive(false);
+            _startButton.gameObject.SetActive(false);
+            _readyButton.gameObject.SetActive(false);
 
             _ready = false;
+            
+            _startButton.onClick.AddListener(OnStartClicked);
+            _readyButton.onClick.AddListener(OnReadyClicked);
+            _exitButton.onClick.AddListener(OnLeaveLobby);
         }
 
         private void OnDisable()
         {
+            _exitButton.onClick.RemoveListener(OnLeaveLobby);
+            _readyButton.onClick.RemoveListener(OnReadyClicked);
+            _startButton.onClick.RemoveListener(OnStartClicked);
+            
             LobbyOrchestrator.LobbyPlayersUpdated -= NetworkLobbyPlayersUpdated;
             MatchmakingService.CurrentLobbyRefreshed -= OnCurrentLobbyRefreshed;
         }
@@ -73,8 +85,8 @@ namespace Core.Network.UI.Views
                 }
             }
 
-            _startButton.SetActive(NetworkManager.Singleton.IsHost && players.All(p => p.Value));
-            _readyButton.SetActive(!_ready);
+            _startButton.gameObject.SetActive(NetworkManager.Singleton.IsHost && players.All(p => p.Value));
+            _readyButton.gameObject.SetActive(!_ready);
         }
 
         private void OnCurrentLobbyRefreshed(Lobby lobby)
@@ -82,18 +94,19 @@ namespace Core.Network.UI.Views
             _waitingText.text = $"Waiting on players... {lobby.Players.Count}/{lobby.MaxPlayers}";
         }
 
-        public void OnReadyClicked()
+        private void OnReadyClicked()
         {
-            _readyButton.SetActive(false);
+            _readyButton.gameObject.SetActive(false);
             _ready = true;
+            ReadyClicked();
         }
 
-        public void OnStartClicked()
+        private void OnStartClicked()
         {
             StartPressed();
         }
         
-        public void OnLeaveLobby()
+        private void OnLeaveLobby()
         {
             LobbyLeft();
         }

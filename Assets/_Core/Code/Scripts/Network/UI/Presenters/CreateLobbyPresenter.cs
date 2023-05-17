@@ -15,31 +15,31 @@ namespace Core.Network.UI.Presenters
         {
         }
 
-        public override void Initialize()
-        {
-            View.LobbyCreated += CreateLobby;
-        }
-
-        public override void Dispose()
-        {
-            View.LobbyCreated -= CreateLobby;
-        }
-        
-        private async void CreateLobby(LobbyData data)
-        {
-            using (new Load("Creating Lobby..."))
-            {
-                try
-                {
-                    await MatchmakingService.CreateLobbyWithAllocation(data);
-                    NetworkManager.Singleton.StartHost();
-                }
-                catch (Exception e)
-                {
-                    Debug.LogError(e);
-                    CanvasUtilities.Instance.ShowError("Failed creating lobby");
-                }
-            }
-        }
+        // public override void Initialize()
+        // {
+        //     View.LobbyCreated += CreateLobby;
+        // }
+        //
+        // public override void Dispose()
+        // {
+        //     View.LobbyCreated -= CreateLobby;
+        // }
+        //
+        // private async void CreateLobby(LobbyData data)
+        // {
+        //     using (new Load("Creating Lobby..."))
+        //     {
+        //         try
+        //         {
+        //             await MatchmakingService.CreateLobbyWithAllocation(data);
+        //             NetworkManager.Singleton.StartHost();
+        //         }
+        //         catch (Exception e)
+        //         {
+        //             Debug.LogError(e);
+        //             CanvasUtilities.Instance.ShowError("Failed creating lobby");
+        //         }
+        //     }
+        // }
     }
 }

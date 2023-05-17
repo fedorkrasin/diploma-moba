@@ -3,17 +3,16 @@ using Core.Network.Data;
 using TMPro;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Core.Network.UI.Components
 {
     public class LobbyRoomPanel : MonoBehaviour
     {
-        [SerializeField] private Transform _difficultyMeter;
         [SerializeField] private TMP_Text _nameText;
         [SerializeField] private TMP_Text _typeText;
         [SerializeField] private TMP_Text _playerCountText;
-
-        [SerializeField] private float _difficultyDialMaxAngle = 100f;
+        [SerializeField] private Button _lobbySelectButton;
 
         public Lobby Lobby { get; private set; }
 
@@ -24,15 +23,21 @@ namespace Core.Network.UI.Components
             UpdateDetails(lobby);
         }
 
+        private void OnEnable()
+        {
+            _lobbySelectButton.onClick.AddListener(OnLobbySelected);
+        }
+
+        private void OnDisable()
+        {
+            _lobbySelectButton.onClick.RemoveListener(OnLobbySelected);
+        }
+
         public void UpdateDetails(Lobby lobby)
         {
             Lobby = lobby;
             _nameText.text = lobby.Name;
             _typeText.text = Constants.GameTypes[GetValue(Constants.GameTypeKey)];
-
-            var point = Mathf.InverseLerp(0, Constants.Difficulties.Count - 1, GetValue(Constants.DifficultyKey));
-            _difficultyMeter.transform.rotation = Quaternion.Euler(0, 0,
-                Mathf.Lerp(_difficultyDialMaxAngle, -_difficultyDialMaxAngle, point));
 
             _playerCountText.text = $"{lobby.Players.Count}/{lobby.MaxPlayers}";
 
@@ -42,7 +47,7 @@ namespace Core.Network.UI.Components
             }
         }
 
-        public void OnClicked()
+        private void OnLobbySelected()
         {
             LobbySelected(Lobby);
         }

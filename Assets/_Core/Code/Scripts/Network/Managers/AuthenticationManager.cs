@@ -7,12 +7,17 @@ namespace Core.Network.Managers
 {
     public class AuthenticationManager : MonoBehaviour
     {
+        [SerializeField] private LobbyOrchestrator _lobbyOrchestrator;
+        [SerializeField] private GameObject _loginScreen;
+        
         public async void LoginAnonymously()
         {
-            using (new Load("Logging you in..."))
+            // using (new Load("Logging you in..."))
             {
                 await AuthenticationService.Login();
-                SceneManager.LoadSceneAsync("Lobby");
+                // SceneManager.LoadSceneAsync("Lobby");
+                _loginScreen.SetActive(false);
+                _lobbyOrchestrator.gameObject.SetActive(true);
             }
         }
     }

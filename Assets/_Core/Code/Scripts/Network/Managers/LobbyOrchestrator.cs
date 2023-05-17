@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using Core.Network.Data;
 using Core.Network.Misc;
 using Core.Network.Services;
-using Core.Network.Views;
+using Core.Network.UI.Components;
+using Core.Network.UI.Views;
 using Unity.Netcode;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
@@ -23,26 +24,19 @@ namespace Core.Network.Managers
             _createScreen.gameObject.SetActive(false);
             _roomScreen.gameObject.SetActive(false);
 
-            
+            CreateLobbyView.LobbyCreated += CreateLobby;
             LobbyRoomPanel.LobbySelected += OnLobbySelected;
-            
+            RoomView.LobbyLeft += OnLobbyLeft;
+            RoomView.StartPressed += OnGameStart;
 
             NetworkObject.DestroyWithScene = true;
+            
+            _roomScreen.ReadyClicked += OnReadyClicked;
         }
         
-        public void OnDisable()
+        private void OnDisable()
         {
-            base.OnDestroy();
-         
-            LobbyRoomPanel.LobbySelected -= OnLobbySelected;
-            
-
-            // We only care about this during lobby
-            if (NetworkManager.Singleton != null)
-            {
-                NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnectCallback;
-            }
-
+            _roomScreen.ReadyClicked -= OnReadyClicked;
         }
 
         #region Main Lobby
@@ -69,6 +63,32 @@ namespace Core.Network.Managers
         }
 
 
+
+        #endregion
+
+        #region Create
+
+        private async void CreateLobby(LobbyData data)
+        {
+            using (new Load("Creating Lobby..."))
+            {
+                try
+                {
+                    await MatchmakingService.CreateLobbyWithAllocation(data);
+
+                    _createScreen.gameObject.SetActive(false);
+                    _roomScreen.gameObject.SetActive(true);
+
+                    // Starting the host immediately will keep the relay server alive
+                    NetworkManager.Singleton.StartHost();
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError(e);
+                    CanvasUtilities.Instance.ShowError("Failed creating lobby");
+                }
+            }
+        }
 
         #endregion
 
@@ -150,7 +170,7 @@ namespace Core.Network.Managers
             UpdateInterface();
         }
 
-        public void OnReadyClicked()
+        private void OnReadyClicked()
         {
             SetReadyServerRpc(NetworkManager.Singleton.LocalClientId);
         }
@@ -168,9 +188,42 @@ namespace Core.Network.Managers
             LobbyPlayersUpdated?.Invoke(_playersInLobby);
         }
 
-        
+        private async void OnLobbyLeft()
+        {
+            using (new Load("Leaving Lobby..."))
+            {
+                _playersInLobby.Clear();
+                NetworkManager.Singleton.Shutdown();
+                await MatchmakingService.LeaveLobby();
+            }
+        }
 
-        
+        public override void OnDestroy()
+        {
+
+            base.OnDestroy();
+            CreateLobbyView.LobbyCreated -= CreateLobby;
+            LobbyRoomPanel.LobbySelected -= OnLobbySelected;
+            RoomView.LobbyLeft -= OnLobbyLeft;
+            RoomView.StartPressed -= OnGameStart;
+
+            // We only care about this during lobby
+            if (NetworkManager.Singleton != null)
+            {
+                NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnectCallback;
+            }
+
+        }
+
+        private async void OnGameStart()
+        {
+            using (new Load("Starting the game..."))
+            {
+                await MatchmakingService.LockLobby();
+                NetworkManager.Singleton.SceneManager.LoadScene("Game", LoadSceneMode.Single);
+            }
+        }
+
         #endregion
     }
 }

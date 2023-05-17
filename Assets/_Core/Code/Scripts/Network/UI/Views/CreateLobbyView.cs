@@ -5,6 +5,7 @@ using Core.Network.Data;
 using Core.UI.ViewManagement.Actors;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Core.Network.UI.Views
 {
@@ -13,14 +14,23 @@ namespace Core.Network.UI.Views
         [SerializeField] private TMP_InputField _nameInput;
         [SerializeField] private TMP_InputField _maxPlayersInput;
         [SerializeField] private TMP_Dropdown _typeDropdown;
-        [SerializeField] private TMP_Dropdown _difficultyDropdown;
+        [SerializeField] private Button _createButton;
         
-        public event Action<LobbyData> LobbyCreated = delegate { };
+        public static event Action<LobbyData> LobbyCreated = delegate { };
+
+        private void OnEnable()
+        {
+            _createButton.onClick.AddListener(OnCreateClicked);
+        }
+        
+        private void OnDisable()
+        {
+            _createButton.onClick.RemoveListener(OnCreateClicked);
+        }
 
         private void Start()
         {
             SetOptions(_typeDropdown, Constants.GameTypes);
-            SetOptions(_difficultyDropdown, Constants.Difficulties);
 
             void SetOptions(TMP_Dropdown dropdown, IEnumerable<string> values)
             {
@@ -28,13 +38,12 @@ namespace Core.Network.UI.Views
             }
         }
 
-        public void OnCreateClicked()
+        private void OnCreateClicked()
         {
             var lobbyData = new LobbyData
             {
                 Name = _nameInput.text,
                 MaxPlayers = int.Parse(_maxPlayersInput.text),
-                Difficulty = _difficultyDropdown.value,
                 Type = _typeDropdown.value
             };
 
