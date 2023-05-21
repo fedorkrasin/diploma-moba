@@ -1,4 +1,5 @@
-﻿using Zenject;
+﻿using Core.Network.Managers;
+using Zenject;
 
 namespace Core.Installers.Bootstrap
 {
@@ -6,7 +7,7 @@ namespace Core.Installers.Bootstrap
     {
         public override void InstallBindings()
         {
-            
+            Container.Bind<LobbyOrchestrator>().FromComponentInHierarchy().AsSingle();
         }
     }
 }

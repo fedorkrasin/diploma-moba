@@ -26,3 +26,11 @@ MonoBehaviour:
       Value:
         Layer: 0
         Prefab: {fileID: 6441883991493846450, guid: 695672a5ee8d75f4e8dabf16754806ce, type: 3}
+    - Key: 3
+      Value:
+        Layer: 0
+        Prefab: {fileID: 187673751785572640, guid: 30f5abc32ff27884e9db53e32fe84cc3, type: 3}
+    - Key: 4
+      Value:
+        Layer: 0
+        Prefab: {fileID: 3040007166754205316, guid: c9899d24aa67c5740b26f0f216cbe1cf, type: 3}

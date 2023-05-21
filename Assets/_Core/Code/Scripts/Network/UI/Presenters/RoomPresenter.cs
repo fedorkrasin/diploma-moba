@@ -7,9 +7,9 @@ using UnityEngine.SceneManagement;
 
 namespace Core.Network.UI.Presenters
 {
-    public class RoomPresenter : Presenter<RoomView>
+    public class RoomPresenter : Presenter<RoomScreen>
     {
-        protected RoomPresenter(RoomView view) : base(view)
+        protected RoomPresenter(RoomScreen screen) : base(screen)
         {
         }
 

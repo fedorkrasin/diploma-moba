@@ -13,7 +13,7 @@ using View = Core.UI.ViewManagement.Actors.View;
 
 namespace Core.Network.UI.Views
 {
-    public class RoomView : View
+    public class RoomScreen : View
     {
         private readonly List<LobbyPlayerPanel> _playerPanels = new();
         
@@ -27,16 +27,16 @@ namespace Core.Network.UI.Views
         private bool _allReady;
         private bool _ready;
 
-        public static event Action StartPressed = delegate { };
+        public event Action StartPressed = delegate { };
         public event Action ReadyClicked = delegate { };
-        public static event Action LobbyLeft = delegate { };
+        public event Action LobbyLeft = delegate { };
 
         private void OnEnable()
         {
             foreach (Transform child in _playerPanelParent) Destroy(child.gameObject);
             _playerPanels.Clear();
 
-            LobbyOrchestrator.LobbyPlayersUpdated += NetworkLobbyPlayersUpdated;
+            // LobbyOrchestrator.LobbyPlayersUpdated += NetworkLobbyPlayersUpdated;
             MatchmakingService.CurrentLobbyRefreshed += OnCurrentLobbyRefreshed;
             _startButton.gameObject.SetActive(false);
             _readyButton.gameObject.SetActive(false);
@@ -54,11 +54,11 @@ namespace Core.Network.UI.Views
             _readyButton.onClick.RemoveListener(OnReadyClicked);
             _startButton.onClick.RemoveListener(OnStartClicked);
             
-            LobbyOrchestrator.LobbyPlayersUpdated -= NetworkLobbyPlayersUpdated;
+            // LobbyOrchestrator.LobbyPlayersUpdated -= NetworkLobbyPlayersUpdated;
             MatchmakingService.CurrentLobbyRefreshed -= OnCurrentLobbyRefreshed;
         }
 
-        private void NetworkLobbyPlayersUpdated(Dictionary<ulong, bool> players)
+        public void NetworkLobbyPlayersUpdated(Dictionary<ulong, bool> players)
         {
             var allActivePlayerIds = players.Keys;
 

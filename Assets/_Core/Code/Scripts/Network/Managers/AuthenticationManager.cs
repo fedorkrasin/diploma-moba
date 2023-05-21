@@ -1,24 +1,17 @@
-﻿using Core.Network.Misc;
+﻿using System.Threading.Tasks;
 using Core.Network.Services;
-using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace Core.Network.Managers
 {
-    public class AuthenticationManager : MonoBehaviour
+    public class AuthenticationManager
     {
-        [SerializeField] private LobbyOrchestrator _lobbyOrchestrator;
-        [SerializeField] private GameObject _loginScreen;
+        public LobbyOrchestrator LobbyOrchestrator { get; set; }
         
-        public async void LoginAnonymously()
+        public async Task LoginAnonymously()
         {
-            // using (new Load("Logging you in..."))
-            {
-                await AuthenticationService.Login();
-                // SceneManager.LoadSceneAsync("Lobby");
-                _loginScreen.SetActive(false);
-                _lobbyOrchestrator.gameObject.SetActive(true);
-            }
+            await AuthenticationService.Login();
+            SceneManager.LoadSceneAsync("Menu");
         }
     }
 }

@@ -5,5 +5,8 @@
         CharacterSelection,
         PlayerController,
         NetworkController,
+        
+        Login,
+        Lobby,
     }
 }

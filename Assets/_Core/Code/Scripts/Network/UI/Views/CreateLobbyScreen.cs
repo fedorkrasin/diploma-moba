@@ -9,14 +9,14 @@ using UnityEngine.UI;
 
 namespace Core.Network.UI.Views
 {
-    public class CreateLobbyView : View
+    public class CreateLobbyScreen : View
     {
         [SerializeField] private TMP_InputField _nameInput;
         [SerializeField] private TMP_InputField _maxPlayersInput;
         [SerializeField] private TMP_Dropdown _typeDropdown;
         [SerializeField] private Button _createButton;
         
-        public static event Action<LobbyData> LobbyCreated = delegate { };
+        public event Action<LobbyData> LobbyCreated = delegate { };
 
         private void OnEnable()
         {
@@ -49,5 +49,7 @@ namespace Core.Network.UI.Views
 
             LobbyCreated(lobbyData);
         }
+
+        
     }
 }

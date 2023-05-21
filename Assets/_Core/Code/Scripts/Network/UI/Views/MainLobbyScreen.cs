@@ -4,19 +4,26 @@ using System.Linq;
 using Core.Network.Services;
 using Core.Network.UI.Components;
 using Core.UI.ViewManagement.Actors;
+using Unity.Services.Lobbies.Models;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Core.Network.UI.Views
 {
-    public class MainLobbyView : View
+    public class MainLobbyScreen : View
     {
         [SerializeField] private LobbyRoomPanel _lobbyPanelPrefab;
         [SerializeField] private Transform _lobbyParent;
         [SerializeField] private GameObject _noLobbiesText;
         [SerializeField] private float _lobbyRefreshRate = 2;
-
+        [SerializeField] private Button _createLobbyButton;
+        
         private readonly List<LobbyRoomPanel> _currentLobbySpawns = new();
         private float _nextRefreshTime;
+        
+        public event Action<Lobby> LobbySelected = delegate { };
+        
+        public event Action CreateLobbyClicked = delegate { };
 
         private void Update()
         {
@@ -27,6 +34,13 @@ namespace Core.Network.UI.Views
         {
             foreach (Transform child in _lobbyParent) Destroy(child.gameObject);
             _currentLobbySpawns.Clear();
+            
+            _createLobbyButton.onClick.AddListener(OnCreateLobbyClicked);
+        }
+
+        private void OnDisable()
+        {
+            _createLobbyButton.onClick.RemoveListener(OnCreateLobbyClicked);
         }
 
         private async void FetchLobbies()
@@ -34,12 +48,8 @@ namespace Core.Network.UI.Views
             try
             {
                 _nextRefreshTime = Time.time + _lobbyRefreshRate;
-
-                // Grab all current lobbies
+                
                 var allLobbies = await MatchmakingService.GatherLobbies();
-
-                // Destroy all the current lobby panels which don't exist anymore.
-                // Exclude our own homes as it'll show for a brief moment after closing the room
                 var lobbyIds = allLobbies.Where(l => l.HostId != AuthenticationService.PlayerId).Select(l => l.Id);
                 var notActive = _currentLobbySpawns.Where(l => !lobbyIds.Contains(l.Lobby.Id)).ToList();
 
@@ -49,18 +59,17 @@ namespace Core.Network.UI.Views
                     _currentLobbySpawns.Remove(panel);
                 }
 
-                // Update or spawn the remaining active lobbies
                 foreach (var lobby in allLobbies)
                 {
                     var current = _currentLobbySpawns.FirstOrDefault(p => p.Lobby.Id == lobby.Id);
                     if (current != null)
                     {
-                        current.UpdateDetails(lobby);
+                        current.UpdateVisuals(lobby);
                     }
                     else
                     {
                         var panel = Instantiate(_lobbyPanelPrefab, _lobbyParent);
-                        panel.Init(lobby);
+                        panel.Init(lobby, OnLobbySelected);
                         _currentLobbySpawns.Add(panel);
                     }
                 }
@@ -71,6 +80,16 @@ namespace Core.Network.UI.Views
             {
                 Debug.LogError(e);
             }
+        }
+
+        private void OnCreateLobbyClicked()
+        {
+            CreateLobbyClicked();
+        }
+        
+        private void OnLobbySelected(Lobby lobby)
+        {
+            LobbySelected(lobby);
         }
     }
 }

@@ -25,7 +25,7 @@ namespace Core.Bootstrap.Commands.Impl
         {
             Application.targetFrameRate = 120;
             
-            _viewManager.OpenView(ViewId.NetworkController);
+            _viewManager.OpenView(ViewId.Login);
         }
     }
 }

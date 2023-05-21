@@ -9,9 +9,9 @@ using UnityEngine;
 
 namespace Core.Network.UI.Presenters
 {
-    public class CreateLobbyPresenter : Presenter<CreateLobbyView>
+    public class CreateLobbyPresenter : Presenter<CreateLobbyScreen>
     {
-        protected CreateLobbyPresenter(CreateLobbyView view) : base(view)
+        protected CreateLobbyPresenter(CreateLobbyScreen screen) : base(screen)
         {
         }
 

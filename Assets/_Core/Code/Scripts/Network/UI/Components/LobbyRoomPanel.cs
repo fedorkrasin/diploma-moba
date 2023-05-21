@@ -16,11 +16,13 @@ namespace Core.Network.UI.Components
 
         public Lobby Lobby { get; private set; }
 
-        public static event Action<Lobby> LobbySelected = delegate { };
+        private Action<Lobby> LobbySelected = delegate { };
 
-        public void Init(Lobby lobby)
+        public void Init(Lobby lobby, Action<Lobby> lobbySelected)
         {
-            UpdateDetails(lobby);
+            Lobby = lobby;
+            LobbySelected = lobbySelected;
+            UpdateVisuals(lobby);
         }
 
         private void OnEnable()
@@ -33,9 +35,8 @@ namespace Core.Network.UI.Components
             _lobbySelectButton.onClick.RemoveListener(OnLobbySelected);
         }
 
-        public void UpdateDetails(Lobby lobby)
+        public void UpdateVisuals(Lobby lobby)
         {
-            Lobby = lobby;
             _nameText.text = lobby.Name;
             _typeText.text = Constants.GameTypes[GetValue(Constants.GameTypeKey)];
 
