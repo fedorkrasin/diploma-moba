@@ -57,8 +57,7 @@ namespace Core.UI.ViewManagement
         {
             view = viewObject.GetComponent<IView>();
             var presenterWrapper = viewObject.AddComponent<PresenterWrapper>();
-            var presenterType =
-                _container.ResolveType(new InjectContext(_container, typeof(object), view.GetType().Name));
+            var presenterType = _container.ResolveType(new InjectContext(_container, typeof(object), view.GetType().Name));
             var presenter = _container.Instantiate(presenterType, new[] { view });
             presenterWrapper.SetPresenter(presenter);
 

@@ -1,5 +1,6 @@
 ﻿using Core.Camera;
 using Core.Characters.Data;
+using Core.Network.Managers;
 using Core.Player;
 using Core.UI.ViewManagement;
 using Core.UI.ViewManagement.Data;
@@ -16,6 +17,8 @@ namespace Core.Installers.Bootstrap
         [SerializeField] private CharactersList _charactersList;
 
         [SerializeField] private CameraController _cameraController;
+
+        // [SerializeField] private LobbyOrchestrator _lobbyOrchestrator;
         
         public override void InstallBindings()
         {
@@ -31,6 +34,9 @@ namespace Core.Installers.Bootstrap
             Container.BindInterfacesAndSelfTo<CharactersList>().FromInstance(_charactersList).AsSingle();
 
             Container.BindInstance(_cameraController).AsSingle();
+            
+            // Network Installer
+            Container.Bind<AuthenticationManager>().AsSingle();
         }
     }
 }

@@ -31,7 +31,7 @@ namespace Core.Bootstrap.Commands.Impl
         public void Execute(CharacterType characterType)
         {
             var player = _playerSpawner.Spawn(characterType);
-            _cameraController.PlayerTransform = player.transform;
+            // _cameraController.PlayerTransform = player.transform;
             _viewManager.OpenView(ViewId.PlayerController);
         }
     }

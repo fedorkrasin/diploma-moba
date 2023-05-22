@@ -7,9 +7,9 @@ namespace Core.UI.ViewManagement.Actors
     {
         protected TView View { get; }
 
-        protected Presenter(TView view)
+        protected Presenter(TView screen)
         {
-            View = view ?? throw new ArgumentNullException(nameof(view));
+            View = screen ?? throw new ArgumentNullException(nameof(screen));
         }
 
         public virtual void Initialize()

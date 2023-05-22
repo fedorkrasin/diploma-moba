@@ -1,0 +1,25 @@
+﻿using TMPro;
+using UnityEngine;
+
+namespace Core.Network.UI.Components
+{
+    public class LobbyPlayerPanel : MonoBehaviour
+    {
+        [SerializeField] private TMP_Text _nameText;
+        [SerializeField] private TMP_Text _statusText;
+
+        public ulong PlayerId { get; private set; }
+
+        public void Init(ulong playerId)
+        {
+            PlayerId = playerId;
+            _nameText.text = $"Player {playerId}";
+        }
+
+        public void SetReady()
+        {
+            _statusText.text = "Ready";
+            _statusText.color = Color.green;
+        }
+    }
+}
