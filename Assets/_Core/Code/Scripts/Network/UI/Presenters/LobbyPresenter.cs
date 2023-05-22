@@ -5,6 +5,7 @@ using Core.Network.Managers;
 using Core.Network.UI.Views;
 using Core.UI.ViewManagement.Actors;
 using Unity.Services.Lobbies.Models;
+using UnityEngine;
 
 namespace Core.Network.UI.Presenters
 {
@@ -21,7 +22,8 @@ namespace Core.Network.UI.Presenters
 
         public override void Initialize()
         {
-            _authenticationManager.LobbyOrchestrator.LobbyPlayersUpdated += View.Room.NetworkLobbyPlayersUpdated;
+            _authenticationManager.LobbyOrchestrator.LobbyPlayersUpdated += OnLobbyPlayersUpdated;
+            _authenticationManager.LobbyOrchestrator.GameStarted += OnGameStarted2;
 
             View.MainLobby.CreateLobbyClicked += OnCreateLobbyClicked;
             View.CreateLobby.LobbyCreated += OnLobbyCreated;
@@ -42,7 +44,8 @@ namespace Core.Network.UI.Presenters
             View.CreateLobby.LobbyCreated -= OnLobbyCreated;
             View.MainLobby.CreateLobbyClicked -= OnCreateLobbyClicked;
             
-            _authenticationManager.LobbyOrchestrator.LobbyPlayersUpdated -= View.Room.NetworkLobbyPlayersUpdated;
+            _authenticationManager.LobbyOrchestrator.GameStarted -= OnGameStarted2;
+            _authenticationManager.LobbyOrchestrator.LobbyPlayersUpdated -= OnLobbyPlayersUpdated;
         }
 
         private void OnCreateLobbyClicked()
@@ -55,6 +58,7 @@ namespace Core.Network.UI.Presenters
             if (await _authenticationManager.LobbyOrchestrator.CreateLobby(lobbyData))
             {
                 View.ShowRoom();
+                OnLobbyPlayersUpdated(_authenticationManager.LobbyOrchestrator.PlayersInLobby);
             }
             else
             {
@@ -67,6 +71,7 @@ namespace Core.Network.UI.Presenters
             if (await _authenticationManager.LobbyOrchestrator.SelectLobby(lobby))
             {
                 View.ShowRoom();
+                OnLobbyPlayersUpdated(_authenticationManager.LobbyOrchestrator.PlayersInLobby);
             }
             else
             {
@@ -82,7 +87,7 @@ namespace Core.Network.UI.Presenters
 
         private void OnLobbyPlayersUpdated(Dictionary<ulong, bool> playersInLobby)
         {
-            
+            View.Room.OnLobbyPlayersUpdated(playersInLobby);
         }
 
         private void OnReadyClicked()
@@ -93,6 +98,11 @@ namespace Core.Network.UI.Presenters
         private void OnGameStarted()
         {
             _authenticationManager.LobbyOrchestrator.StartGame();
+        }
+
+        private void OnGameStarted2()
+        {
+            Debug.Log(this);
         }
     }
 }

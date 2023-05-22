@@ -1,16 +1,30 @@
-﻿using Core.Network.Player;
+﻿using System;
+using Core.Network.Player;
 using Core.Network.Services;
+using Core.Player;
+using Core.UI.ViewManagement;
+using Core.UI.ViewManagement.Data;
 using Unity.Netcode;
 using UnityEngine;
+using Zenject;
 
 namespace Core.Network.Managers
 {
     public class GameManager : NetworkBehaviour
     {
-        [SerializeField] private PlayerController _playerPrefab;
+        [SerializeField] private PlayerBehaviour _playerPrefab;
+
+        private ViewManager _viewManager;
+        
+        [Inject]
+        private void Construct(ViewManager viewManager)
+        {
+            _viewManager = viewManager ?? throw new ArgumentNullException(nameof(viewManager));
+        }
 
         public override void OnNetworkSpawn()
         {
+            _viewManager.OpenView(ViewId.PlayerController);
             SpawnPlayerServerRpc(NetworkManager.Singleton.LocalClientId);
         }
 
@@ -21,10 +35,10 @@ namespace Core.Network.Managers
             spawn.NetworkObject.SpawnWithOwnership(playerId);
         }
 
-        public override void OnDestroy()
+        public override async void OnDestroy()
         {
             base.OnDestroy();
-            MatchmakingService.LeaveLobby();
+            await MatchmakingService.LeaveLobby();
             if (NetworkManager.Singleton != null) NetworkManager.Singleton.Shutdown();
         }
     }

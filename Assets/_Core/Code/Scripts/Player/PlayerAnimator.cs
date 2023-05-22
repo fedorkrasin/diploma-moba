@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace Core.Player
 {
-    public class PlayerAnimator : MonoBehaviour
+    public class PlayerAnimator : NetworkBehaviour
     {
         private static readonly Dictionary<PlayerAnimationTrigger, int> Triggers = new()
         {
@@ -19,7 +20,8 @@ namespace Core.Player
         
         [SerializeField] private Animator _animator;
         
-        public void TriggerAnimation(PlayerAnimationTrigger key)
+        [ServerRpc]
+        public void TriggerAnimationServerRpc(PlayerAnimationTrigger key)
         {
             foreach (var mappingValue in Triggers.Values)
             {
@@ -29,7 +31,8 @@ namespace Core.Player
             _animator.SetTrigger(Triggers[key]);
         }
 
-        public void ToggleAnimation(PlayerAnimationBool key, bool value)
+        [ServerRpc]
+        public void ToggleAnimationServerRpc(PlayerAnimationBool key, bool value)
         {
             if (_animator.GetBool(Bools[key]) != value)
             {

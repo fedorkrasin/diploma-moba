@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Core.Network.Managers;
 using Core.Network.Services;
 using Core.Network.UI.Components;
 using TMPro;
@@ -24,8 +23,8 @@ namespace Core.Network.UI.Views
         [SerializeField] private Button _readyButton;
         [SerializeField] private Button _exitButton;
 
-        private bool _allReady;
-        private bool _ready;
+        private bool _isReady;
+        private bool _areAllReady;
 
         public event Action StartPressed = delegate { };
         public event Action ReadyClicked = delegate { };
@@ -33,16 +32,18 @@ namespace Core.Network.UI.Views
 
         private void OnEnable()
         {
-            foreach (Transform child in _playerPanelParent) Destroy(child.gameObject);
+            foreach (Transform child in _playerPanelParent)
+            {
+                Destroy(child.gameObject);
+            }
+            
             _playerPanels.Clear();
-
-            // LobbyOrchestrator.LobbyPlayersUpdated += NetworkLobbyPlayersUpdated;
-            MatchmakingService.CurrentLobbyRefreshed += OnCurrentLobbyRefreshed;
+            _isReady = false;
             _startButton.gameObject.SetActive(false);
             _readyButton.gameObject.SetActive(false);
 
-            _ready = false;
-            
+            MatchmakingService.CurrentLobbyRefreshed += OnCurrentLobbyRefreshed;
+
             _startButton.onClick.AddListener(OnStartClicked);
             _readyButton.onClick.AddListener(OnReadyClicked);
             _exitButton.onClick.AddListener(OnLeaveLobby);
@@ -54,15 +55,13 @@ namespace Core.Network.UI.Views
             _readyButton.onClick.RemoveListener(OnReadyClicked);
             _startButton.onClick.RemoveListener(OnStartClicked);
             
-            // LobbyOrchestrator.LobbyPlayersUpdated -= NetworkLobbyPlayersUpdated;
             MatchmakingService.CurrentLobbyRefreshed -= OnCurrentLobbyRefreshed;
         }
 
-        public void NetworkLobbyPlayersUpdated(Dictionary<ulong, bool> players)
+        public void OnLobbyPlayersUpdated(Dictionary<ulong, bool> players)
         {
             var allActivePlayerIds = players.Keys;
 
-            // Remove all inactive panels
             var toDestroy = _playerPanels.Where(p => !allActivePlayerIds.Contains(p.PlayerId)).ToList();
             foreach (var panel in toDestroy)
             {
@@ -86,7 +85,7 @@ namespace Core.Network.UI.Views
             }
 
             _startButton.gameObject.SetActive(NetworkManager.Singleton.IsHost && players.All(p => p.Value));
-            _readyButton.gameObject.SetActive(!_ready);
+            _readyButton.gameObject.SetActive(!_isReady);
         }
 
         private void OnCurrentLobbyRefreshed(Lobby lobby)
@@ -97,7 +96,7 @@ namespace Core.Network.UI.Views
         private void OnReadyClicked()
         {
             _readyButton.gameObject.SetActive(false);
-            _ready = true;
+            _isReady = true;
             ReadyClicked();
         }
 

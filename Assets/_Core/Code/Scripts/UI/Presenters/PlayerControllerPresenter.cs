@@ -21,8 +21,8 @@ namespace Core.UI.Presenters
 
         public override void Initialize()
         {
-            _player = _playerSpawner.Player;
-            _player.Controller = (PlayerControllerView)View; // TODO: fix that
+            // _player = _playerSpawner.Player;
+            // _player.Controller = (PlayerControllerView)View; // TODO: fix that
             
             View.AttackButtonClicked += OnAttackButtonClicked;
             View.SpellButtonClicked += OnSpellButtonClicked;

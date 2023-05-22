@@ -3,11 +3,11 @@ using Zenject;
 
 namespace Core.Installers.Bootstrap
 {
-    public class LevelInstaller : MonoInstaller
+    public class LevelInstaller : MonoInstaller<LevelInstaller>
     {
         public override void InstallBindings()
         {
-            Container.Bind<LobbyOrchestrator>().FromComponentInHierarchy().AsSingle();
+            Container.Bind<GameManager>().FromComponentInHierarchy().AsSingle();
         }
     }
 }

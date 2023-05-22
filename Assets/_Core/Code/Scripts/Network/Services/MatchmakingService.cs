@@ -15,7 +15,7 @@ namespace Core.Network.Services
     public static class MatchmakingService
     {
         private const int HeartbeatInterval = 15;
-        private const int LobbyRefreshRate = 2; // Rate limits at 2
+        private const int LobbyRefreshRate = 2;
 
         private static UnityTransport _transport;
 
@@ -41,8 +41,6 @@ namespace Core.Network.Services
             _currentLobby = null;
         }
 
-        // Obviously you'd want to add customization to the query, but this
-        // will suffice for this simple demo
         public static async Task<List<Lobby>> GatherLobbies()
         {
             var options = new QueryLobbiesOptions
@@ -62,11 +60,9 @@ namespace Core.Network.Services
 
         public static async Task CreateLobbyWithAllocation(LobbyData data)
         {
-            // Create a relay allocation and generate a join code to share with the lobby
             var a = await RelayService.Instance.CreateAllocationAsync(data.MaxPlayers);
             var joinCode = await RelayService.Instance.GetJoinCodeAsync(a.AllocationId);
 
-            // Create a lobby, adding the relay join code to the lobby data
             var options = new CreateLobbyOptions
             {
                 Data = new Dictionary<string, DataObject>
@@ -87,8 +83,7 @@ namespace Core.Network.Services
 
             _currentLobby = await Lobbies.Instance.CreateLobbyAsync(data.Name, data.MaxPlayers, options);
 
-            Transport.SetHostRelayData(a.RelayServer.IpV4, (ushort)a.RelayServer.Port, a.AllocationIdBytes, a.Key,
-                a.ConnectionData);
+            Transport.SetHostRelayData(a.RelayServer.IpV4, (ushort)a.RelayServer.Port, a.AllocationIdBytes, a.Key, a.ConnectionData);
 
             Heartbeat();
             PeriodicallyRefreshLobby();
@@ -145,6 +140,7 @@ namespace Core.Network.Services
             _updateLobbySource?.Cancel();
 
             if (_currentLobby != null)
+            {
                 try
                 {
                     if (_currentLobby.HostId == AuthenticationService.PlayerId)
@@ -156,6 +152,7 @@ namespace Core.Network.Services
                 {
                     Debug.Log(e);
                 }
+            }
         }
     }
 }

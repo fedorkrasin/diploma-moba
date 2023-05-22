@@ -7,22 +7,19 @@ namespace Core.Network.Player
     {
         [SerializeField] private float _speed = 3;
 
-        private Rigidbody _rb;
-
-        private void Awake()
+        public override void OnNetworkSpawn()
         {
-            _rb = GetComponent<Rigidbody>();
+            if (!IsOwner)
+            {
+                enabled = false;
+            }
         }
 
         private void Update()
         {
             var dir = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
-            _rb.velocity = dir * _speed;
-        }
-
-        public override void OnNetworkSpawn()
-        {
-            if (!IsOwner) Destroy(this);
+            transform.position += dir * (_speed * Time.deltaTime);
+            Debug.Log(dir);
         }
     }
 }

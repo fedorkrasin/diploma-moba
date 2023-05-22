@@ -1,34 +1,40 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Core.Bootstrap.Commands;
 using Core.Network.Data;
 using Core.Network.Services;
 using Unity.Netcode;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using Zenject;
 
 namespace Core.Network.Managers
 {
     public class LobbyOrchestrator : NetworkBehaviour
     {
-        private readonly Dictionary<ulong, bool> _playersInLobby = new();
-        
-        private float _nextLobbyUpdate;
-        public event Action<Dictionary<ulong, bool>> LobbyPlayersUpdated = delegate { };
-
         private AuthenticationManager _authenticationManager;
+        private IStartMatchCommand _startMatchCommand;
+        private float _nextLobbyUpdate;
+        
+        public event Action<Dictionary<ulong, bool>> LobbyPlayersUpdated = delegate { };
+        public event Action GameStarted = delegate { };
 
+        public Dictionary<ulong, bool> PlayersInLobby { get; private set; }
+        
         [Inject]
-        public void Construct(AuthenticationManager authenticationManager)
+        public void Construct(
+            AuthenticationManager authenticationManager,
+            IStartMatchCommand startMatchCommand)
         {
             _authenticationManager = authenticationManager ?? throw new ArgumentNullException(nameof(authenticationManager));
+            _startMatchCommand = startMatchCommand ?? throw new ArgumentNullException(nameof(startMatchCommand));
         }
         
         private void OnEnable()
         {
             _authenticationManager.LobbyOrchestrator = this;
+            PlayersInLobby = new Dictionary<ulong, bool>();
             NetworkObject.DestroyWithScene = true;
         }
 
@@ -37,7 +43,7 @@ namespace Core.Network.Managers
             if (IsServer)
             {
                 NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnectedCallback;
-                _playersInLobby.Add(NetworkManager.Singleton.LocalClientId, false);
+                PlayersInLobby.Add(NetworkManager.Singleton.LocalClientId, false);
                 OnLobbyPlayersUpdated();
             }
         
@@ -94,7 +100,7 @@ namespace Core.Network.Managers
         {
             // using (new Load("Leaving Lobby..."))
             {
-                _playersInLobby.Clear();
+                PlayersInLobby.Clear();
                 NetworkManager.Singleton.Shutdown();
                 await MatchmakingService.LeaveLobby();
             }
@@ -110,7 +116,8 @@ namespace Core.Network.Managers
             // using (new Load("Starting the game..."))
             {
                 await MatchmakingService.LockLobby();
-                NetworkManager.Singleton.SceneManager.LoadScene("Game", LoadSceneMode.Single);
+                GameStarted();
+                _startMatchCommand.Execute();
             }
         }
 
@@ -119,14 +126,14 @@ namespace Core.Network.Managers
         {
             if (IsServer) return;
 
-            if (!_playersInLobby.ContainsKey(clientId)) _playersInLobby.Add(clientId, isReady);
-            else _playersInLobby[clientId] = isReady;
+            if (!PlayersInLobby.ContainsKey(clientId)) PlayersInLobby.Add(clientId, isReady);
+            else PlayersInLobby[clientId] = isReady;
             OnLobbyPlayersUpdated();
         }
 
         private void PropagateToClients()
         {
-            foreach (var player in _playersInLobby)
+            foreach (var player in PlayersInLobby)
             {
                 UpdatePlayerClientRpc(player.Key, player.Value);
             }
@@ -136,7 +143,7 @@ namespace Core.Network.Managers
         {
             if (!IsServer) return;
 
-            _playersInLobby.TryAdd(playerId, false);
+            PlayersInLobby.TryAdd(playerId, false);
             PropagateToClients();
             OnLobbyPlayersUpdated();
         }
@@ -145,7 +152,7 @@ namespace Core.Network.Managers
         {
             if (IsServer)
             {
-                if (_playersInLobby.ContainsKey(playerId)) _playersInLobby.Remove(playerId);
+                if (PlayersInLobby.ContainsKey(playerId)) PlayersInLobby.Remove(playerId);
                 RemovePlayerClientRpc(playerId);
                 OnLobbyPlayersUpdated();
             }
@@ -160,21 +167,21 @@ namespace Core.Network.Managers
         {
             if (IsServer) return;
 
-            if (_playersInLobby.ContainsKey(clientId)) _playersInLobby.Remove(clientId);
+            if (PlayersInLobby.ContainsKey(clientId)) PlayersInLobby.Remove(clientId);
             OnLobbyPlayersUpdated();
         }
         
         [ServerRpc(RequireOwnership = false)]
         private void SetReadyServerRpc(ulong playerId)
         {
-            _playersInLobby[playerId] = true;
+            PlayersInLobby[playerId] = true;
             PropagateToClients();
             OnLobbyPlayersUpdated();
         }
 
         private void OnLobbyPlayersUpdated()
         {
-            LobbyPlayersUpdated(_playersInLobby);
+            LobbyPlayersUpdated(PlayersInLobby);
         }
     }
 }

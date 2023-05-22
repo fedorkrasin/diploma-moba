@@ -1,4 +1,5 @@
-﻿using Core.Characters;
+﻿using Core.Camera;
+using Core.Characters;
 using Core.Player.Stats;
 using Core.Player.Systems;
 using Core.UI.Views.Impl;
@@ -22,33 +23,42 @@ namespace Core.Player
 
         public PlayerControllerView Controller { get; set; }
         
+        public override void OnNetworkSpawn()
+        {
+            if (!IsOwner)
+            {
+                enabled = false;
+            }
+        }
+        
         private void Awake()
         {
             _transform = transform;
             _direction = _transform.forward;
             Health.Initialize(_stats.Health, _stats.HealthRegeneration);
             Mana.Initialize(_stats.Mana, _stats.ManaRegeneration);
+            Controller = FindObjectOfType<PlayerControllerView>();
         }
 
         private void FixedUpdate()
         {
-            // if (!IsOwner) return;
             if (!Controller) return;
             
             if (Controller.IsMoving)
             {
                 Move();
                 Rotate();
-                Animator.ToggleAnimation(PlayerAnimator.PlayerAnimationBool.IsRunning, true);
+                Animator.ToggleAnimationServerRpc(PlayerAnimator.PlayerAnimationBool.IsRunning, true);
             }
             else
             {
-                Animator.ToggleAnimation(PlayerAnimator.PlayerAnimationBool.IsRunning, false);
+                Animator.ToggleAnimationServerRpc(PlayerAnimator.PlayerAnimationBool.IsRunning, false);
             }
         }
 
         private void Move()
         {
+            // var moveDirection = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
             var moveDirection = new Vector3(Controller.MovementValue.x, 0f, Controller.MovementValue.y);
             
             if (moveDirection.magnitude > 0f)
@@ -67,7 +77,7 @@ namespace Core.Player
         public void Attack()
         {
             Character.Attack();
-            Animator.TriggerAnimation(PlayerAnimator.PlayerAnimationTrigger.Attack);
+            Animator.TriggerAnimationServerRpc(PlayerAnimator.PlayerAnimationTrigger.Attack);
         }
 
         public bool UseSpell()
