@@ -1,69 +1,73 @@
 ﻿using Core.UI.Components.Features;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace Core.Player.Systems
 {
-    public class ManaSystem : MonoBehaviour, IRegenerating
+    public class ManaSystem : NetworkBehaviour, IRegenerating
     {
-        [SerializeField] private FeatureBar _manabar;
-        
         private const float RegenerationDelay = 0.5f; // temp
         
-        private int _maxMana;
         private float _regeneration;
-
-        private int _currentMana;
+        
         private float _currentExactMana;
         private float _regenerationTimer;
+        
+        public NetworkVariable<int> CurrentMana { get; } = new();
+        public int MaxMana { get; private set; }
 
-        public void Initialize(float health, float regeneration)
+        public void Initialize(float mana, float regeneration)
         {
-            _maxMana = (int)health;
-            _currentMana = (int)health;
             _regeneration = regeneration;
+            MaxMana = (int)mana;
+            CurrentMana.Value = (int)mana;
         }
 
         private void Update()
         {
             Regenerate();
-            _manabar.UpdateValue(_currentExactMana, _maxMana);
         }
 
         public bool Spend(float manaAmount)
         {
+            Debug.Log(_currentExactMana - manaAmount);
+            if (!IsServer) return false;
+            
             if (_currentExactMana - manaAmount < 0) return false;
             
             _currentExactMana -= manaAmount;
-            _currentMana = (int)_currentExactMana;
+            CurrentMana.Value = (int)_currentExactMana;
 
             return true;
         }
 
-        public void Regenerate(int healAmount)
+        public void Regenerate(int manaAmount)
         {
-            _currentMana += healAmount;
+            CurrentMana.Value += manaAmount;
 
-            if (_currentMana > _maxMana) _currentMana = _maxMana;
+            if (CurrentMana.Value > MaxMana) CurrentMana.Value = MaxMana;
         }
 
         public void Regenerate()
         {
-            if (_currentMana != (int) _currentExactMana) _currentExactMana = _currentMana;
-            if (_currentMana == _maxMana) return;
+            if (!IsServer) return;
+            
+            if (CurrentMana.Value != (int) _currentExactMana) _currentExactMana = CurrentMana.Value;
+            if (CurrentMana.Value == MaxMana) return;
             
             if (_regenerationTimer >= RegenerationDelay)
             {
                 var regeneration = _regeneration * RegenerationDelay;
                 
-                if (_currentExactMana + regeneration < _maxMana)
+                if (_currentExactMana + regeneration < MaxMana)
                 {
                     _currentExactMana += regeneration;
-                    _currentMana = (int)_currentExactMana;
+                    CurrentMana.Value = (int)_currentExactMana;
                 }
                 else
                 {
-                    _currentExactMana = _maxMana;
-                    _currentMana = _maxMana;
+                    _currentExactMana = MaxMana;
+                    CurrentMana.Value = MaxMana;
                 }
 
                 _regenerationTimer = 0;

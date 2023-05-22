@@ -17,8 +17,6 @@ namespace Core.Installers.Bootstrap
         [SerializeField] private CharactersList _charactersList;
 
         [SerializeField] private CameraController _cameraController;
-
-        // [SerializeField] private LobbyOrchestrator _lobbyOrchestrator;
         
         public override void InstallBindings()
         {

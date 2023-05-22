@@ -17,11 +17,8 @@ namespace Core.Network.Managers
         private IStartMatchCommand _startMatchCommand;
         private float _nextLobbyUpdate;
         
-        public event Action<Dictionary<ulong, bool>> LobbyPlayersUpdated = delegate { };
-        public event Action GameStarted = delegate { };
+        public event Action<Dictionary<ulong, LobbyPlayer>> LobbyPlayersUpdated = delegate { };
 
-        public Dictionary<ulong, bool> PlayersInLobby { get; private set; }
-        
         [Inject]
         public void Construct(
             AuthenticationManager authenticationManager,
@@ -34,7 +31,7 @@ namespace Core.Network.Managers
         private void OnEnable()
         {
             _authenticationManager.LobbyOrchestrator = this;
-            PlayersInLobby = new Dictionary<ulong, bool>();
+            _authenticationManager.PlayersInLobby = new Dictionary<ulong, LobbyPlayer>();
             NetworkObject.DestroyWithScene = true;
         }
 
@@ -43,7 +40,7 @@ namespace Core.Network.Managers
             if (IsServer)
             {
                 NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnectedCallback;
-                PlayersInLobby.Add(NetworkManager.Singleton.LocalClientId, false);
+                _authenticationManager.PlayersInLobby.Add(NetworkManager.Singleton.LocalClientId, new LobbyPlayer());
                 OnLobbyPlayersUpdated();
             }
         
@@ -100,7 +97,7 @@ namespace Core.Network.Managers
         {
             // using (new Load("Leaving Lobby..."))
             {
-                PlayersInLobby.Clear();
+                _authenticationManager.PlayersInLobby.Clear();
                 NetworkManager.Singleton.Shutdown();
                 await MatchmakingService.LeaveLobby();
             }
@@ -111,29 +108,33 @@ namespace Core.Network.Managers
             SetReadyServerRpc(NetworkManager.Singleton.LocalClientId);
         }
 
+        public void SelectCharacter(int characterId)
+        {
+            SelectCharacterServerRpc(NetworkManager.Singleton.LocalClientId, characterId);
+        }
+
         public async void StartGame()
         {
             // using (new Load("Starting the game..."))
             {
                 await MatchmakingService.LockLobby();
-                GameStarted();
                 _startMatchCommand.Execute();
             }
         }
 
         [ClientRpc]
-        private void UpdatePlayerClientRpc(ulong clientId, bool isReady)
+        private void UpdatePlayerClientRpc(ulong clientId, LobbyPlayer lobbyPlayer)
         {
             if (IsServer) return;
 
-            if (!PlayersInLobby.ContainsKey(clientId)) PlayersInLobby.Add(clientId, isReady);
-            else PlayersInLobby[clientId] = isReady;
+            if (!_authenticationManager.PlayersInLobby.ContainsKey(clientId)) _authenticationManager.PlayersInLobby.Add(clientId, lobbyPlayer);
+            else _authenticationManager.PlayersInLobby[clientId] = lobbyPlayer;
             OnLobbyPlayersUpdated();
         }
 
         private void PropagateToClients()
         {
-            foreach (var player in PlayersInLobby)
+            foreach (var player in _authenticationManager.PlayersInLobby)
             {
                 UpdatePlayerClientRpc(player.Key, player.Value);
             }
@@ -143,7 +144,7 @@ namespace Core.Network.Managers
         {
             if (!IsServer) return;
 
-            PlayersInLobby.TryAdd(playerId, false);
+            _authenticationManager.PlayersInLobby.TryAdd(playerId, new LobbyPlayer());
             PropagateToClients();
             OnLobbyPlayersUpdated();
         }
@@ -152,7 +153,7 @@ namespace Core.Network.Managers
         {
             if (IsServer)
             {
-                if (PlayersInLobby.ContainsKey(playerId)) PlayersInLobby.Remove(playerId);
+                if (_authenticationManager.PlayersInLobby.ContainsKey(playerId)) _authenticationManager.PlayersInLobby.Remove(playerId);
                 RemovePlayerClientRpc(playerId);
                 OnLobbyPlayersUpdated();
             }
@@ -167,21 +168,29 @@ namespace Core.Network.Managers
         {
             if (IsServer) return;
 
-            if (PlayersInLobby.ContainsKey(clientId)) PlayersInLobby.Remove(clientId);
+            if (_authenticationManager.PlayersInLobby.ContainsKey(clientId)) _authenticationManager.PlayersInLobby.Remove(clientId);
             OnLobbyPlayersUpdated();
         }
         
         [ServerRpc(RequireOwnership = false)]
         private void SetReadyServerRpc(ulong playerId)
         {
-            PlayersInLobby[playerId] = true;
+            _authenticationManager.PlayersInLobby[playerId].IsReady = true;
+            PropagateToClients();
+            OnLobbyPlayersUpdated();
+        }
+        
+        [ServerRpc(RequireOwnership = false)]
+        private void SelectCharacterServerRpc(ulong playerId, int characterId)
+        {
+            _authenticationManager.PlayersInLobby[playerId].SelectedCharacterId = characterId;
             PropagateToClients();
             OnLobbyPlayersUpdated();
         }
 
         private void OnLobbyPlayersUpdated()
         {
-            LobbyPlayersUpdated(PlayersInLobby);
+            LobbyPlayersUpdated(_authenticationManager.PlayersInLobby);
         }
     }
 }

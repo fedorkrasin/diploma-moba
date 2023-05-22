@@ -1,5 +1,6 @@
 ﻿using System;
 using Core.UI.Components.Controller;
+using Core.UI.Presenters;
 using Core.UI.ViewManagement.Actors;
 using UnityEngine;
 using UnityEngine.UI;
@@ -17,6 +18,8 @@ namespace Core.UI.Views.Impl
         public Vector2 MovementValue => _movementJoystick.Value;
         public CooldownButton SpellButton => _spellButton;
         public CooldownButton UltimateButton => _ultimateButton;
+        
+        public PlayerControllerPresenter Presenter { get; set; }
         
         public event Action AttackButtonClicked = delegate { };
         public event Action SpellButtonClicked = delegate { };

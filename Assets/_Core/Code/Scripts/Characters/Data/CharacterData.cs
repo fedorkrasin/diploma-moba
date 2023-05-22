@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Core.Player;
+using UnityEngine;
 
 namespace Core.Characters.Data
 {
@@ -7,7 +8,7 @@ namespace Core.Characters.Data
     {
         [field: SerializeField] public int Id;
         [field: SerializeField] public CharacterType Type;
-        [field: SerializeField] public Character CharacterPrefab;
+        [field: SerializeField] public PlayerBehaviour CharacterPrefab;
         [field: SerializeField] public Sprite Icon;
 
         public string Name => Type.ToString();

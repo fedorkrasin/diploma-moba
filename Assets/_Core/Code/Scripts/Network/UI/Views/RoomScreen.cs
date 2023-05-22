@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Core.Characters;
+using Core.Characters.Data;
+using Core.Network.Data;
 using Core.Network.Services;
 using Core.Network.UI.Components;
+using Core.UI.Components.CharacterSelection;
 using TMPro;
 using Unity.Netcode;
 using Unity.Services.Lobbies.Models;
@@ -17,12 +21,15 @@ namespace Core.Network.UI.Views
         private readonly List<LobbyPlayerPanel> _playerPanels = new();
         
         [SerializeField] private LobbyPlayerPanel _playerPanelPrefab;
+        [SerializeField] private CharacterSelectionButton _selectButtonPrefab;
         [SerializeField] private Transform _playerPanelParent;
+        [SerializeField] private Transform _charactersParent;
         [SerializeField] private TMP_Text _waitingText;
         [SerializeField] private Button _startButton;
         [SerializeField] private Button _readyButton;
         [SerializeField] private Button _exitButton;
 
+        private List<CharacterSelectionButton> _characterSelectionButtons = new();
         private bool _isReady;
         private bool _areAllReady;
 
@@ -37,6 +44,8 @@ namespace Core.Network.UI.Views
                 Destroy(child.gameObject);
             }
             
+            _characterSelectionButtons = new List<CharacterSelectionButton>();
+
             _playerPanels.Clear();
             _isReady = false;
             _startButton.gameObject.SetActive(false);
@@ -51,14 +60,26 @@ namespace Core.Network.UI.Views
 
         private void OnDisable()
         {
+            foreach (var button in _characterSelectionButtons)
+            {
+                Destroy(button.gameObject);
+            }
+            
             _exitButton.onClick.RemoveListener(OnLeaveLobby);
             _readyButton.onClick.RemoveListener(OnReadyClicked);
             _startButton.onClick.RemoveListener(OnStartClicked);
             
             MatchmakingService.CurrentLobbyRefreshed -= OnCurrentLobbyRefreshed;
         }
+        
+        public void InitializeSelectButton(CharacterData data, Action<int> selectCharacter)
+        {
+            var button = Instantiate(_selectButtonPrefab, _charactersParent);
+            button.Initialize(data, () => selectCharacter.Invoke(data.Id));
+            _characterSelectionButtons.Add(button);
+        }
 
-        public void OnLobbyPlayersUpdated(Dictionary<ulong, bool> players)
+        public void OnLobbyPlayersUpdated(Dictionary<ulong, LobbyPlayer> players)
         {
             var allActivePlayerIds = players.Keys;
 
@@ -74,7 +95,7 @@ namespace Core.Network.UI.Views
                 var currentPanel = _playerPanels.FirstOrDefault(p => p.PlayerId == player.Key);
                 if (currentPanel != null)
                 {
-                    if (player.Value) currentPanel.SetReady();
+                    if (player.Value.IsReady) currentPanel.SetReady();
                 }
                 else
                 {
@@ -84,7 +105,7 @@ namespace Core.Network.UI.Views
                 }
             }
 
-            _startButton.gameObject.SetActive(NetworkManager.Singleton.IsHost && players.All(p => p.Value));
+            _startButton.gameObject.SetActive(NetworkManager.Singleton.IsHost && players.All(p => p.Value.IsReady));
             _readyButton.gameObject.SetActive(!_isReady);
         }
 

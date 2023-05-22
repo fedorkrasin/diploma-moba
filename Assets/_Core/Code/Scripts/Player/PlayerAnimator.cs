@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Unity.Netcode;
+using Unity.Netcode.Components;
 using UnityEngine;
 
 namespace Core.Player
@@ -19,16 +20,17 @@ namespace Core.Player
         };
         
         [SerializeField] private Animator _animator;
+        [SerializeField] private NetworkAnimator _networkAnimator;
         
         [ServerRpc]
         public void TriggerAnimationServerRpc(PlayerAnimationTrigger key)
         {
             foreach (var mappingValue in Triggers.Values)
             {
-                _animator.ResetTrigger(mappingValue);
+                _networkAnimator.ResetTrigger(mappingValue);
             }
 
-            _animator.SetTrigger(Triggers[key]);
+            _networkAnimator.SetTrigger(Triggers[key]);
         }
 
         [ServerRpc]

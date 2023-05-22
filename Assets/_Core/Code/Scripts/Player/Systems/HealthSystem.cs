@@ -1,35 +1,34 @@
 ﻿using System;
 using Core.UI.Components.Features;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace Core.Player.Systems
 {
-    public class HealthSystem : MonoBehaviour, IRegenerating
+    public class HealthSystem : NetworkBehaviour, IRegenerating
     {
-        [SerializeField] private FeatureBar _healthbar;
-        
         private const float RegenerationDelay = 0.5f; // temp
         
-        private int _maxHealth;
         private float _regeneration;
 
-        private int _currentHealth;
         private float _currentExactHealth;
         private float _regenerationTimer;
+
+        public NetworkVariable<int> CurrentHealth { get; } = new();
+        public int MaxHealth { get; private set; }
 
         public event Action Died = delegate { };
 
         public void Initialize(float health, float regeneration)
         {
-            _maxHealth = (int)health;
-            _currentHealth = (int)health;
             _regeneration = regeneration;
+            MaxHealth = (int)health;
+            CurrentHealth.Value = (int)health;
         }
 
         private void Update()
         {
             Regenerate();
-            _healthbar.UpdateValue(_currentExactHealth, _maxHealth);
         }
 
         private void OnMouseDown()
@@ -39,42 +38,46 @@ namespace Core.Player.Systems
 
         public void Damage(float damageAmount)
         {
+            if (!IsServer) return;
+            
             _currentExactHealth -= damageAmount;
-            _currentHealth = (int)_currentExactHealth;
+            CurrentHealth.Value = (int)_currentExactHealth;
 
             if (_currentExactHealth < 0)
             {
                 _currentExactHealth = 0;
-                _currentHealth = 0;
+                CurrentHealth.Value = 0;
                 OnDied();
             }
         }
 
         public void Heal(int healAmount)
         {
-            _currentHealth += healAmount;
+            CurrentHealth.Value += healAmount;
 
-            if (_currentHealth > _maxHealth) _currentHealth = _maxHealth;
+            if (CurrentHealth.Value > MaxHealth) CurrentHealth.Value = MaxHealth;
         }
 
         public void Regenerate()
         {
-            if (_currentHealth != (int) _currentExactHealth) _currentExactHealth = _currentHealth;
-            if (_currentHealth == _maxHealth) return;
+            if (!IsServer) return;
+            
+            if (CurrentHealth.Value != (int) _currentExactHealth) _currentExactHealth = CurrentHealth.Value;
+            if (CurrentHealth.Value == MaxHealth) return;
             
             if (_regenerationTimer >= RegenerationDelay)
             {
                 var regeneration = _regeneration * RegenerationDelay;
                 
-                if (_currentExactHealth + regeneration < _maxHealth)
+                if (_currentExactHealth + regeneration < MaxHealth)
                 {
                     _currentExactHealth += regeneration;
-                    _currentHealth = (int)_currentExactHealth;
+                    CurrentHealth.Value = (int)_currentExactHealth;
                 }
                 else
                 {
-                    _currentExactHealth = _maxHealth;
-                    _currentHealth = _maxHealth;
+                    _currentExactHealth = MaxHealth;
+                    CurrentHealth.Value = MaxHealth;
                 }
 
                 _regenerationTimer = 0;

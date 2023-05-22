@@ -1,5 +1,4 @@
-﻿using Core.Camera;
-using Core.Characters;
+﻿using Core.Characters;
 using Core.Player.Stats;
 using Core.Player.Systems;
 using Core.UI.Views.Impl;
@@ -22,22 +21,23 @@ namespace Core.Player
         private Vector3 _direction;
 
         public PlayerControllerView Controller { get; set; }
-        
+
         public override void OnNetworkSpawn()
-        {
-            if (!IsOwner)
-            {
-                enabled = false;
-            }
-        }
-        
-        private void Awake()
         {
             _transform = transform;
             _direction = _transform.forward;
             Health.Initialize(_stats.Health, _stats.HealthRegeneration);
             Mana.Initialize(_stats.Mana, _stats.ManaRegeneration);
-            Controller = FindObjectOfType<PlayerControllerView>();
+            
+            if (!IsOwner)
+            {
+                enabled = false;
+            }
+            else
+            {
+                Controller = FindObjectOfType<PlayerControllerView>(); // TODO: fix
+                Controller.Presenter.Player = this;
+            }
         }
 
         private void FixedUpdate()
@@ -58,7 +58,6 @@ namespace Core.Player
 
         private void Move()
         {
-            // var moveDirection = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
             var moveDirection = new Vector3(Controller.MovementValue.x, 0f, Controller.MovementValue.y);
             
             if (moveDirection.magnitude > 0f)

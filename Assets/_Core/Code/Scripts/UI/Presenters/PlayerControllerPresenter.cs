@@ -10,7 +10,7 @@ namespace Core.UI.Presenters
     {
         private readonly PlayerSpawner _playerSpawner;
 
-        private PlayerBehaviour _player;
+        public PlayerBehaviour Player { get; set; }
         
         protected PlayerControllerPresenter(
             PlayerSpawner playerSpawner,
@@ -21,8 +21,7 @@ namespace Core.UI.Presenters
 
         public override void Initialize()
         {
-            // _player = _playerSpawner.Player;
-            // _player.Controller = (PlayerControllerView)View; // TODO: fix that
+            View.Presenter = this; // TODO: fix
             
             View.AttackButtonClicked += OnAttackButtonClicked;
             View.SpellButtonClicked += OnSpellButtonClicked;
@@ -38,22 +37,22 @@ namespace Core.UI.Presenters
 
         private void OnAttackButtonClicked()
         {
-            _player.Attack();
+            Player.Attack();
         }
 
         private void OnSpellButtonClicked()
         {
-            if (_player.UseSpell())
+            if (Player.UseSpell())
             {
-                View.SpellButton.SetCooldown(_player.Character.Spells.Simple.Cooldown);
+                View.SpellButton.SetCooldown(Player.Character.Spells.Simple.Cooldown);
             }
         }
 
         private void OnUltimateButtonClicked()
         {
-            if (_playerSpawner.Player.UseUltimate())
+            if (Player.UseUltimate())
             {
-                View.UltimateButton.SetCooldown(_player.Character.Spells.Ultimate.Cooldown);
+                View.UltimateButton.SetCooldown(Player.Character.Spells.Ultimate.Cooldown);
             }
         }
     }

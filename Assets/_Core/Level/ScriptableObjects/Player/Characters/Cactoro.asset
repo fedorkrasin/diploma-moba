@@ -12,5 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a450d438f9a14e45b5272758d10de458, type: 3}
   m_Name: Cactoro
   m_EditorClassIdentifier: 
+  Id: 0
   Type: 0
-  CharacterPrefab: {fileID: 8308075943173221664, guid: 66ec9651d5afc424f9aaaf6db14889b8, type: 3}
+  CharacterPrefab: {fileID: 1720788614366806608, guid: 66ec9651d5afc424f9aaaf6db14889b8, type: 3}
+  Icon: {fileID: 0}

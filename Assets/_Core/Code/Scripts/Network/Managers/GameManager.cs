@@ -1,25 +1,28 @@
 ﻿using System;
-using Core.Network.Player;
+using Core.Characters.Data;
 using Core.Network.Services;
-using Core.Player;
 using Core.UI.ViewManagement;
 using Core.UI.ViewManagement.Data;
 using Unity.Netcode;
-using UnityEngine;
 using Zenject;
 
 namespace Core.Network.Managers
 {
     public class GameManager : NetworkBehaviour
     {
-        [SerializeField] private PlayerBehaviour _playerPrefab;
-
         private ViewManager _viewManager;
+        private AuthenticationManager _authenticationManager;
+        private CharactersList _charactersList;
         
         [Inject]
-        private void Construct(ViewManager viewManager)
+        private void Construct(
+            ViewManager viewManager, 
+            AuthenticationManager authenticationManager,
+            CharactersList charactersList)
         {
             _viewManager = viewManager ?? throw new ArgumentNullException(nameof(viewManager));
+            _authenticationManager = authenticationManager ?? throw new ArgumentNullException(nameof(authenticationManager));
+            _charactersList = charactersList ? charactersList : throw new ArgumentNullException(nameof(charactersList));
         }
 
         public override void OnNetworkSpawn()
@@ -31,7 +34,8 @@ namespace Core.Network.Managers
         [ServerRpc(RequireOwnership = false)]
         private void SpawnPlayerServerRpc(ulong playerId)
         {
-            var spawn = Instantiate(_playerPrefab);
+            var character = _charactersList.Get(_authenticationManager.PlayersInLobby[playerId].SelectedCharacterId).CharacterPrefab;
+            var spawn = Instantiate(character);
             spawn.NetworkObject.SpawnWithOwnership(playerId);
         }
 
