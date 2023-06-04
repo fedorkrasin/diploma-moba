@@ -74,8 +74,8 @@ namespace Core.Network.Services
                             DataObject.IndexOptions.N1)
                     },
                     {
-                        Constants.DifficultyKey,
-                        new DataObject(DataObject.VisibilityOptions.Public, data.Difficulty.ToString(),
+                        Constants.MapKey,
+                        new DataObject(DataObject.VisibilityOptions.Public, data.Map.ToString(),
                             DataObject.IndexOptions.N2)
                     }
                 }

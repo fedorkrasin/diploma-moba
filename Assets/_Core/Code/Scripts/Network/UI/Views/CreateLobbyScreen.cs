@@ -14,6 +14,7 @@ namespace Core.Network.UI.Views
         [SerializeField] private TMP_InputField _nameInput;
         [SerializeField] private TMP_InputField _maxPlayersInput;
         [SerializeField] private TMP_Dropdown _typeDropdown;
+        [SerializeField] private TMP_Dropdown _mapDropdown;
         [SerializeField] private Button _createButton;
         
         public event Action<LobbyData> LobbyCreated = delegate { };
@@ -31,6 +32,7 @@ namespace Core.Network.UI.Views
         private void Start()
         {
             SetOptions(_typeDropdown, Constants.GameTypes);
+            SetOptions(_mapDropdown, Constants.Maps);
 
             void SetOptions(TMP_Dropdown dropdown, IEnumerable<string> values)
             {
@@ -44,7 +46,8 @@ namespace Core.Network.UI.Views
             {
                 Name = _nameInput.text,
                 MaxPlayers = int.Parse(_maxPlayersInput.text),
-                Type = _typeDropdown.value
+                Type = _typeDropdown.value,
+                Map = _mapDropdown.value,
             };
 
             LobbyCreated(lobbyData);

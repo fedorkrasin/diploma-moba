@@ -4,7 +4,7 @@
     {
         public string Name;
         public int MaxPlayers;
-        public int Difficulty;
         public int Type;
+        public int Map;
     }
 }
